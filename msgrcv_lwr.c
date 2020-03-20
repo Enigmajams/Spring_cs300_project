@@ -26,7 +26,7 @@ int main(int argc, char**argv)
     else {
      //THIS IS WHERE MESSAGE GETS RECEIVED
      // string msg = messageGet(key,msgflg));
-     // fprintf(stderr, "msg: \"%d\"\n", msg);
+         fprintf(stderr, "msg: \"%d\"\n", rbuf.prefix);
         
         fprintf(stderr, "msgget: msgget succeeded: msgqid = %d\n", msqid);
         
