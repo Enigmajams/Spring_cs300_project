@@ -1,4 +1,4 @@
-javac edu/cs300/*java
+javac edu/cs300/*.java
 javac CtCILibrary/*.java
 javac -h . edu/cs300/MessageJNI.java
 export JAVA_HOME=/usr/java/latest
