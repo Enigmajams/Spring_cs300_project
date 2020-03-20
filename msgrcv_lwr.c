@@ -14,6 +14,7 @@ int main(int argc, char**argv)
     int msgflg = IPC_CREAT | 0666;
     key_t key;
     response_buf rbuf;
+    prefix_buf pbuf;
     size_t buf_length;
 
     key = ftok(CRIMSON_ID,QUEUE_NUMBER);
@@ -26,7 +27,7 @@ int main(int argc, char**argv)
     else {
      //THIS IS WHERE MESSAGE GETS RECEIVED
      // string msg = messageGet(key,msgflg));
-         fprintf(stderr, "msg: \"%d\"\n", rbuf.prefix);
+         fprintf(stderr, "msg: \"%d\"\n", pbuf.prefix);
         
         fprintf(stderr, "msgget: msgget succeeded: msgqid = %d\n", msqid);
         
