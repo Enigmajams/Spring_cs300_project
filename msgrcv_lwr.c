@@ -23,9 +23,15 @@ int main(int argc, char**argv)
         perror("(msgget)");
         fprintf(stderr, "Error msgget: %s\n", strerror( errnum ));
     }
-    else
+    else {
+     //THIS IS WHERE MESSAGE GETS RECEIVED
+     // string msg = messageGet(key,msgflg));
+     // fprintf(stderr, "msg: \"%d\"\n", msg);
+        
         fprintf(stderr, "msgget: msgget succeeded: msgqid = %d\n", msqid);
-
+        
+        
+    }
 
     // msgrcv to receive message
     int ret;
