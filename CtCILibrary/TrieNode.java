@@ -1,6 +1,7 @@
 package CtCILibrary;
 
 import java.util.HashMap;
+import java.lang.String;
 
 /* One node in the trie. Most of the logic of the trie is implemented
  * in this class.
