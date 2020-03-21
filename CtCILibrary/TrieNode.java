@@ -9,6 +9,7 @@ public class TrieNode {
     /* The children of this node in the trie.*/
     private HashMap<Character, TrieNode> children;
     private boolean terminates = false;
+    private string longestSubString = "";
 
     // The character stored in this node as data.
     private char character;	
@@ -39,7 +40,9 @@ public class TrieNode {
     	if (word == null || word.isEmpty()) {
     		return;
     	}
-    	
+    	if (word.length() > longestSubString.length()){
+		longestSubString = word;
+	}
         char firstChar = word.charAt(0);
 
         TrieNode child = getChild(firstChar);
@@ -61,6 +64,10 @@ public class TrieNode {
     public TrieNode getChild(char c) {
     	return children.get(c);
     }
+	
+	public string getLSS(){
+		return longestSubString;
+	}
 
     /* Returns whether this node represents the end of a complete word. */
     public boolean terminates() {
