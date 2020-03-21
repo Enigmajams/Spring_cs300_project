@@ -1,13 +1,24 @@
 package edu.cs300;
 import CtCILibrary.*;
+import java.util.*;
 import java.util.concurrent.*;
+import java.util.Scanner; 
 
 public class ParallelTextSearch{
     
   public static void main(String[] args){
 
     int treeCount=1;
-    String[] samples = {"conspicuous", "parallel", "parachute","coping", "figure", "withering"};
+    File text = new File("Peter_Pan.txt");
+    Scanner sc = new Scanner(text); 
+    ArrayList<String> list = new ArrayList<string();
+    while(sc.hasNextLine()){
+        list.add(sc.nextLine);       
+        
+    }      
+      
+    String[] samples = GetStringArray(list);
+    //{"conspicuous", "parallel", "parachute","coping", "figure", "withering"};
     ArrayBlockingQueue[] workers = new ArrayBlockingQueue[treeCount];
     ArrayBlockingQueue resultsOutputArray=new ArrayBlockingQueue(treeCount*10);
 
