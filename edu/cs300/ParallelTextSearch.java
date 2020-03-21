@@ -55,8 +55,9 @@ public class ParallelTextSearch{
       } catch (InterruptedException e) {};
     }
   }
-}
+
 catch (IOException e) {
       return;
       }
+  }
 }
