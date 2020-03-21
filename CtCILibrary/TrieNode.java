@@ -65,7 +65,7 @@ public class TrieNode {
     	return children.get(c);
     }
 	
-	public string getLSS(){
+	public String getLSS(){
 		return longestSubString;
 	}
 
