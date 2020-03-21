@@ -16,7 +16,7 @@ public class ParallelTextSearch{
     Scanner sc = new Scanner(text); 
            
     ArrayList<String> list = new ArrayList<String>();
-    while(sc.hasNextLine()){
+    while(sc.hasNext()){
         list.add(sc.next());         
     }      
       
