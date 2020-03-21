@@ -14,11 +14,10 @@ public class ParallelTextSearch{
     Scanner sc = new Scanner(text); 
     ArrayList<String> list = new ArrayList<String>();
     while(sc.hasNextLine()){
-        list.add(sc.nextLine);       
-        
+        list.add(sc.next());         
     }      
       
-    String[] samples = GetStringArray(list);
+    String[] samples = getStringArray(list);
     //{"conspicuous", "parallel", "parachute","coping", "figure", "withering"};
     ArrayBlockingQueue[] workers = new ArrayBlockingQueue[treeCount];
     ArrayBlockingQueue resultsOutputArray=new ArrayBlockingQueue(treeCount*10);
