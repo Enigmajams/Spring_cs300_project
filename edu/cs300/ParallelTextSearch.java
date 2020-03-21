@@ -7,7 +7,7 @@ public class ParallelTextSearch{
   public static void main(String[] args){
 
     int treeCount=2;
-    String[][]  samples = {{"conspicuous", "parallel", "parachute"},{"coping", "figure", "withering"}};
+    String[] samples = {"conspicuous", "parallel", "parachute","coping", "figure", "withering"};
     ArrayBlockingQueue[] workers = new ArrayBlockingQueue[treeCount];
     ArrayBlockingQueue resultsOutputArray=new ArrayBlockingQueue(treeCount*10);
 
@@ -20,12 +20,12 @@ public class ParallelTextSearch{
        workers[i]=new ArrayBlockingQueue(10);
     }
 
-    new Worker(samples[0],0,workers[0],resultsOutputArray).start();
-    new Worker(samples[1],1,workers[1],resultsOutputArray).start();
+    new Worker(samples,0,workers[0],resultsOutputArray).start();
+    //new Worker(samples[1],1,workers[1],resultsOutputArray).start();
 
     try {
       workers[0].put(args[0]);
-      workers[1].put(args[0]);
+     //workers[1].put(args[0]);
     } catch (InterruptedException e) {};
       
     int counter=0;
