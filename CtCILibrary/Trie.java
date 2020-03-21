@@ -54,7 +54,7 @@ public class Trie
         for (i = 0; i < prefix.length(); i++) {
             lastNode = lastNode.getChild(prefix.charAt(i));           
         }
-      return prefix + lastNode.getLongestSubString();
+      return prefix + lastNode.getLSS();
     }
         
     
