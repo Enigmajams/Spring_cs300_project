@@ -5,27 +5,34 @@ import java.util.ArrayList;
 import java.util.concurrent.*;
 import java.util.Scanner; 
 
+
 public class ParallelTextSearch{
     
   public static void main(String[] args){
+    try{ 
+        File passages = new File("/home/ecjackson5/Spring_cs300_project/Passages.txt");
+        Scanner passageNameReader = new Scanner(passages); 
+        ArrayList<String> fileList = new ArrayList<String>();
+        while(sc.hasNext()){
+            fileList.add(sc.next());         
+        }
+        //at this point filelist should contain all the file names
+        for( )
 
-    int treeCount=1;
+        File text = new File("/home/ecjackson5/Spring_cs300_project/Peter_Pan.txt");
+        Scanner sc = new Scanner(text); 
+        sc.useDelimiter("\\W|(?=\\S*['-])([a-zA-Z'-]+)"); //checking regex to obtain the correct delimiter
+
+        ArrayList<String> list = new ArrayList<String>();
+        while(sc.hasNext()){
+            list.add(sc.next());         
+        }      
       
-     try{ 
-    File text = new File("/home/ecjackson5/Spring_cs300_project/Peter_Pan.txt");
-    Scanner sc = new Scanner(text); 
-    sc.useDelimiter("\\W|(?=\\S*['-])([a-zA-Z'-]+)"); //checking regex to obtain the correct delimiter
-           
-    ArrayList<String> list = new ArrayList<String>();
-    while(sc.hasNext()){
-        list.add(sc.next());         
-    }      
+        String[] samples = new String[list.size()];
+        samples = list.toArray(samples);
       
-    String[] samples = new String[list.size()];
-     samples = list.toArray(samples);
-      
-      
-    //{"conspicuous", "parallel", "parachute","coping", "figure", "withering"};
+                  
+   int treeCount;
     ArrayBlockingQueue[] workers = new ArrayBlockingQueue[treeCount];
     ArrayBlockingQueue resultsOutputArray=new ArrayBlockingQueue(treeCount*10);
 
