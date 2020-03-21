@@ -1,6 +1,7 @@
 package CtCILibrary;
 
 import java.util.ArrayList;
+import java.lang.String;
 
 
 /* Implements a trie. We store the input list of words in tries so
