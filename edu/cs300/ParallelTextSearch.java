@@ -14,6 +14,7 @@ public class ParallelTextSearch{
      try{ 
     File text = new File("/home/ecjackson5/Spring_cs300_project/Peter_Pan.txt");
     Scanner sc = new Scanner(text); 
+         //sc.useDelimiter(""); checking regex to obtain the correct delimiter
            
     ArrayList<String> list = new ArrayList<String>();
     while(sc.hasNext()){
