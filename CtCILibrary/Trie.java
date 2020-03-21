@@ -1,7 +1,7 @@
 package CtCILibrary;
 
 import java.util.ArrayList;
-import java.lang.String;
+
 
 
 /* Implements a trie. We store the input list of words in tries so
@@ -48,7 +48,7 @@ public class Trie
     	return contains(prefix, false);
     }
     
-    public string getLongest(String prefix){
+    public String getLongest(String prefix){
         TrieNode lastNode = root;
         int i = 0;
         for (i = 0; i < prefix.length(); i++) {
