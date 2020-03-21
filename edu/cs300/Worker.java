@@ -27,7 +27,7 @@ class Worker extends Thread{
         
         if (!found){
           //System.out.println("Worker-"+this.id+" "+req.requestID+":"+ prefix+" ==> not found ");
-          resultsOutputArray.put(passageName+":"+prefix+" not found");
+          resultsOutputArray.put(passageName+":hey just checking"+prefix+" not found");
         } else{
           //System.out.println("Worker-"+this.id+" "+req.requestID+":"+ prefix+" ==> "+word);
           resultsOutputArray.put(passageName+":"+prefix+" found");
