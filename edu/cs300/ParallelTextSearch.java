@@ -1,7 +1,7 @@
 package edu.cs300;
 import CtCILibrary.*;
 import java.io.*;
-import java.util.*;
+import java.util.ArrayList;
 import java.util.concurrent.*;
 import java.util.Scanner; 
 
