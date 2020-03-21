@@ -10,6 +10,8 @@ public class ParallelTextSearch{
   public static void main(String[] args){
 
     int treeCount=1;
+      
+      
     File text = new File("Peter_Pan.txt");
     Scanner sc = new Scanner(text); 
     ArrayList<String> list = new ArrayList<String>();
@@ -17,7 +19,10 @@ public class ParallelTextSearch{
         list.add(sc.next());         
     }      
       
-    String[] samples = getStringArray(list);
+    String[] samples = new String[list.size()];
+     samples = list.toArray(samples);
+      
+      
     //{"conspicuous", "parallel", "parachute","coping", "figure", "withering"};
     ArrayBlockingQueue[] workers = new ArrayBlockingQueue[treeCount];
     ArrayBlockingQueue resultsOutputArray=new ArrayBlockingQueue(treeCount*10);
