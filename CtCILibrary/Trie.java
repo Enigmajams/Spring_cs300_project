@@ -47,6 +47,20 @@ public class Trie
     	return contains(prefix, false);
     }
     
+    public string getLongest(String prefix){
+        TrieNode lastNode = root;
+        int i = 0;
+        for (i = 0; i < prefix.length(); i++) {
+            lastNode = lastNode.getChild(prefix.charAt(i));           
+        }
+      return prefix + lastNode.getLongestSubString();
+    }
+        
+    
+    
+    
+    
+    
     public TrieNode getRoot() {
     	return root;
     }
