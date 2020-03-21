@@ -11,9 +11,13 @@ public class ParallelTextSearch{
 
     int treeCount=1;
       
-      
+     try{ 
     File text = new File("/home/ecjackson5/Spring_cs300_project/Peter_Pan.txt");
     Scanner sc = new Scanner(text); 
+     }
+      catch (IOException e) {
+      return -1;
+      }
     ArrayList<String> list = new ArrayList<String>();
     while(sc.hasNextLine()){
         list.add(sc.next());         
