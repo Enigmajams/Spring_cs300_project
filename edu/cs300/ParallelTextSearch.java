@@ -12,7 +12,7 @@ public class ParallelTextSearch{
     int treeCount=1;
       
       
-    File text = new File("TestText.txt");
+    File text = new File("/home/ecjackson5/Spring_cs300_project/edu/cs300/TestText.txt");
     Scanner sc = new Scanner(text); 
     ArrayList<String> list = new ArrayList<String>();
     while(sc.hasNextLine()){
