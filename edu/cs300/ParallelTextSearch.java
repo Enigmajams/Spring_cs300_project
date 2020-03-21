@@ -14,10 +14,7 @@ public class ParallelTextSearch{
      try{ 
     File text = new File("/home/ecjackson5/Spring_cs300_project/Peter_Pan.txt");
     Scanner sc = new Scanner(text); 
-     }
-      catch (IOException e) {
-      return -1;
-      }
+           
     ArrayList<String> list = new ArrayList<String>();
     while(sc.hasNextLine()){
         list.add(sc.next());         
@@ -58,5 +55,8 @@ public class ParallelTextSearch{
       } catch (InterruptedException e) {};
     }
   }
-
+}
+catch (IOException e) {
+      return;
+      }
 }
