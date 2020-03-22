@@ -87,6 +87,7 @@ public class ParallelTextSearch{
   }
 
 catch (IOException e) {
+    System.out.println("Error: File not found\n");
       return;
       }
   }
