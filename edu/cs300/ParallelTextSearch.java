@@ -10,7 +10,7 @@ public class ParallelTextSearch{
     
   public static void main(String[] args){
     try{ 
-        File passages = new File("/home/ecjackson5/Spring_cs300_project/Passages.txt");
+        File passages = new File("/home/ecjackson5/Spring_cs300_project/passages.txt");
         Scanner passageNameReader = new Scanner(passages); 
         ArrayList<String> fileList = new ArrayList<String>();
         while(passageNameReader.hasNext()){
