@@ -13,26 +13,26 @@ public class ParallelTextSearch{
         File passages = new File("/home/ecjackson5/Spring_cs300_project/Passages.txt");
         Scanner passageNameReader = new Scanner(passages); 
         ArrayList<String> fileList = new ArrayList<String>();
-        while(sc.hasNext()){
-            fileList.add(sc.next());         
+        while(passageNameReader.hasNext()){
+            fileList.add(passageNameReader.next());         
         }
         int numPassages = fileList.size();
         //at this point filelist should contain all the file names
         ArrayList<String[]> passageArrays = new ArrayList<String[]>();
         for(int i=0;i<numPassages;i++){
             
-            File text = new File("/home/ecjackson5/Spring_cs300_project/"+fileList.at(i));
+            File text = new File("/home/ecjackson5/Spring_cs300_project/"+fileList.get(i));
             Scanner sc = new Scanner(text); 
             sc.useDelimiter("\\W|(?=\\S*['-])([a-zA-Z'-]+)"); //checking regex to obtain the correct delimiter
 
             ArrayList<String> passageArrayList = new ArrayList<String>();
             while(sc.hasNext()){
-                passage.add(sc.next());         
+                passageArrayList.add(sc.next());         
             }      
       
-            String[] passageBasicArray = new String[list.size()];
-            passageBasicArray = passage.toArray(passageBasicArray);
-            passageArrays.at(i) = passageBasicArray;
+            String[] passageBasicArray = new String[passageArrayList.size()];
+            passageBasicArray = passageArrayList.toArray(passageBasicArray);
+            passageArrays.add(passageBasicArray);
         }
         //Theoretically the passageArrays arraylist now contains all the file strings
         
@@ -64,7 +64,7 @@ public class ParallelTextSearch{
     }
     
     for (int i = 0; i < numPassages; i++){
-    new Worker(passageArrays.at(i),i,workers[i],resultsOutputArray).start();
+    new Worker(passageArrays.get(i),i,workers[i],resultsOutputArray).start();
     //new Worker(samples[1],1,workers[1],resultsOutputArray).start();
     }
     try {
