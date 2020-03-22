@@ -65,7 +65,7 @@ public class ParallelTextSearch{
     
     for (int i = 0; i < numPassages; i++){     
     new Worker(passageArrays.get(i),i,workers[i],resultsOutputArray).start();
-    System.out.println("Created worker " + i + "\n");
+    //System.out.println("Created worker " + i + "\n");
     //new Worker(samples[1],1,workers[1],resultsOutputArray).start();
     }
     try {
