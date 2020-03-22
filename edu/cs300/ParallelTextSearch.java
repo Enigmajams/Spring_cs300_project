@@ -16,10 +16,27 @@ public class ParallelTextSearch{
         while(sc.hasNext()){
             fileList.add(sc.next());         
         }
+        int numPassages = fileList.size();
         //at this point filelist should contain all the file names
-        for( )
+        ArrayList<String[]> passageArrays = new ArrayList<String[]>();
+        for(int i=0;i<numPassages;i++){
+            
+            File text = new File("/home/ecjackson5/Spring_cs300_project/"+fileList.at(i));
+            Scanner sc = new Scanner(text); 
+            sc.useDelimiter("\\W|(?=\\S*['-])([a-zA-Z'-]+)"); //checking regex to obtain the correct delimiter
 
-        File text = new File("/home/ecjackson5/Spring_cs300_project/Peter_Pan.txt");
+            ArrayList<String> passageArrayList = new ArrayList<String>();
+            while(sc.hasNext()){
+                passage.add(sc.next());         
+            }      
+      
+            String[] passageBasicArray = new String[list.size()];
+            passageBasicArray = passage.toArray(passageBasicArray);
+            passageArrays.at(i) = passageBasicArray;
+        }
+        //Theoretically the passageArrays arraylist now contains all the file strings
+        
+        /*File text = new File("/home/ecjackson5/Spring_cs300_project/Peter_Pan.txt");
         Scanner sc = new Scanner(text); 
         sc.useDelimiter("\\W|(?=\\S*['-])([a-zA-Z'-]+)"); //checking regex to obtain the correct delimiter
 
@@ -30,9 +47,10 @@ public class ParallelTextSearch{
       
         String[] samples = new String[list.size()];
         samples = list.toArray(samples);
-      
+      */
                   
-   int treeCount;
+   int treeCount = numPassages;
+        
     ArrayBlockingQueue[] workers = new ArrayBlockingQueue[treeCount];
     ArrayBlockingQueue resultsOutputArray=new ArrayBlockingQueue(treeCount*10);
 
@@ -44,13 +62,16 @@ public class ParallelTextSearch{
      for (int i=0;i<treeCount;i++) {
        workers[i]=new ArrayBlockingQueue(10);
     }
-
-    new Worker(samples,0,workers[0],resultsOutputArray).start();
+    
+    for (int i = 0; i < numPassages; i++){
+    new Worker(passageArrays.at(i),i,workers[i],resultsOutputArray).start();
     //new Worker(samples[1],1,workers[1],resultsOutputArray).start();
-
+    }
     try {
-      workers[0].put(args[0]);
+      for (int i = 0; i < numPassages; i++){  
+      workers[i].put(args[0]);
      //workers[1].put(args[0]);
+      }
     } catch (InterruptedException e) {};
       
     int counter=0;
