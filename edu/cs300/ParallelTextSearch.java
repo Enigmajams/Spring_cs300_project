@@ -9,6 +9,11 @@ import java.util.Scanner;
 public class ParallelTextSearch{
     
   public static void main(String[] args){
+        SearchRequest test = new MessageJNI().readPrefixRequestMsg())
+         System.out.println("message: " + test.prerfix + " \n");
+      
+      
+      
     try{ 
         File passages = new File("/home/ecjackson5/Spring_cs300_project/passages.txt");
         Scanner passageNameReader = new Scanner(passages); 
