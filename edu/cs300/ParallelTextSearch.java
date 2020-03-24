@@ -10,7 +10,7 @@ public class ParallelTextSearch{
     
   public static void main(String[] args){
         SearchRequest test = new MessageJNI().readPrefixRequestMsg();
-         System.out.println("message: " + test.prerfix + " \n");
+         System.out.println("message: " + test.prefix + " \n");
       
       
       
