@@ -12,8 +12,8 @@ public class ParallelTextSearch{
            
         SearchRequest test = new MessageJNI().readPrefixRequestMsg();
         // System.out.println("message: " + test.prefix + " \n");
-      
-      if (test.prefix.length() <= 2 ){
+        String prefix = test.prefix;
+      if (prefix.length() <= 2 ){
         System.out.println("Provide prefix (min 3 characters) for search i.e. con\n");
         System.exit(0);
     }
@@ -77,7 +77,7 @@ public class ParallelTextSearch{
     }
     try {
       for (int i = 0; i < numPassages; i++){  
-      workers[i].put(args[0]);
+      workers[i].put(prefix);
      //workers[1].put(args[0]);
       }
     } catch (InterruptedException e) {};
