@@ -9,7 +9,7 @@ import java.util.Scanner;
 public class ParallelTextSearch{
     
   public static void main(String[] args){
-        SearchRequest test = new MessageJNI().readPrefixRequestMsg());
+        SearchRequest test = new MessageJNI().readPrefixRequestMsg();
          System.out.println("message: " + test.prerfix + " \n");
       
       
