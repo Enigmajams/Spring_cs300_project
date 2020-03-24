@@ -32,7 +32,7 @@ int main(int argc, char**argv)
          perror("msgrcv");
          return;
       }
-      printf("recvd: \"%s\"\n", pbuf.mtext);
+      printf("recvd: \"%s\"\n", pbuf.prefix);
         
         
     }
