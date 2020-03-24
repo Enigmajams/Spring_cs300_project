@@ -25,11 +25,14 @@ int main(int argc, char**argv)
         fprintf(stderr, "Error msgget: %s\n", strerror( errnum ));
     }
     else {
-     //THIS IS WHERE MESSAGE GETS RECEIVED
-     // string msg = messageGet(key,msgflg));
-     // fprintf(stderr, "msg: \"%s\"\n", pbuf.prefix);
+     //THIS IS WHERE MESSAGE GETS RECEIVED          
         
         fprintf(stderr, "msgget: msgget succeeded: msgqid = %d\n", msqid);
+        if (msgrcv(msqid, &pbuf, sizeof(pbuf.prefix), 0, 0) == -1) {
+         perror("msgrcv");
+         return;
+      }
+      printf("recvd: \"%s\"\n", pbuf.mtext);
         
         
     }
