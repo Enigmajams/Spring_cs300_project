@@ -1,3 +1,4 @@
+
 #include <sys/types.h>
 #include <sys/ipc.h>
 #include <sys/msg.h>
@@ -14,7 +15,6 @@ int main(int argc, char**argv)
     int msgflg = IPC_CREAT | 0666;
     key_t key;
     response_buf rbuf;
-    prefix_buf pbuf;
     size_t buf_length;
 
     key = ftok(CRIMSON_ID,QUEUE_NUMBER);
@@ -24,18 +24,9 @@ int main(int argc, char**argv)
         perror("(msgget)");
         fprintf(stderr, "Error msgget: %s\n", strerror( errnum ));
     }
-    else {
-     //THIS IS WHERE MESSAGE GETS RECEIVED          
-        
+    else
         fprintf(stderr, "msgget: msgget succeeded: msgqid = %d\n", msqid);
-        if (msgrcv(msqid, &pbuf, sizeof(pbuf.prefix)+sizeof(pbuf.id)+sizeof(pbuf.mtype),0,0) < 0) {
-         perror("msgrcv");
-         return;
-      }
-      printf("recvd: \"%s\"\n", pbuf.prefix);
-        
-        
-    }
+
 
     // msgrcv to receive message
     int ret;
