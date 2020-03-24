@@ -28,7 +28,7 @@ int main(int argc, char**argv)
      //THIS IS WHERE MESSAGE GETS RECEIVED          
         
         fprintf(stderr, "msgget: msgget succeeded: msgqid = %d\n", msqid);
-        if (msgrcv(msqid, &pbuf, sizeof(pbuf.prefix)+sizeof(pbuf.id)+sizeOf(pbuf.mtype),0,0) < 0) {
+        if (msgrcv(msqid, &pbuf, sizeof(pbuf.prefix)+sizeof(pbuf.id)+sizeof(pbuf.mtype),0,0) < 0) {
          perror("msgrcv");
          return;
       }
