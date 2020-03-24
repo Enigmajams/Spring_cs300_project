@@ -9,9 +9,14 @@ import java.util.Scanner;
 public class ParallelTextSearch{
     
   public static void main(String[] args){
+           
         SearchRequest test = new MessageJNI().readPrefixRequestMsg();
-         System.out.println("message: " + test.prefix + " \n");
+        // System.out.println("message: " + test.prefix + " \n");
       
+      if (test.prefix <= 2 ){
+        System.out.println("Provide prefix (min 3 characters) for search i.e. con\n");
+        System.exit(0);
+    }
       
       
     try{ 
@@ -59,10 +64,7 @@ public class ParallelTextSearch{
     ArrayBlockingQueue[] workers = new ArrayBlockingQueue[treeCount];
     ArrayBlockingQueue resultsOutputArray=new ArrayBlockingQueue(treeCount*10);
 
-    if (args.length == 0 || args[0].length() <= 2 ){
-        System.out.println("Provide prefix (min 3 characters) for search i.e. con\n");
-        System.exit(0);
-    }
+    
 
      for (int i=0;i<treeCount;i++) {
        workers[i]=new ArrayBlockingQueue(10);
