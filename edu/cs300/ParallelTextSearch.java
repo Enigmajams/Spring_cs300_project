@@ -88,9 +88,9 @@ public class ParallelTextSearch{
         System.out.println("results:"+results);
         counter++;
           if (results == "   ")
-          MessageJNI message =  new MessageJNI().writeLongestWordResponseMsg(0, prefix, counter, "/home/ecjackson5/Spring_cs300_project/"+fileList.get(counter), results, 5, 0);          
+          new MessageJNI().writeLongestWordResponseMsg(0, prefix, counter, "/home/ecjackson5/Spring_cs300_project/"+fileList.get(counter), results, 5, 0);          
           else 
-          MessageJNI message =  new MessageJNI().writeLongestWordResponseMsg(0, prefix, counter, "/home/ecjackson5/Spring_cs300_project/"+fileList.get(counter), results, 5, 1);          
+          new MessageJNI().writeLongestWordResponseMsg(0, prefix, counter, "/home/ecjackson5/Spring_cs300_project/"+fileList.get(counter), results, 5, 1);          
       } catch (InterruptedException e) {};
     }
   }
