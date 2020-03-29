@@ -73,12 +73,10 @@ public class ParallelTextSearch{
     for (int i = 0; i < numPassages; i++){     
     new Worker(passageArrays.get(i),i,workers[i],resultsOutputArray).start();
     //System.out.println("Created worker " + i + "\n");
-    //new Worker(samples[1],1,workers[1],resultsOutputArray).start();
     }
     try {
       for (int i = 0; i < numPassages; i++){  
       workers[i].put(prefix);
-     //workers[1].put(args[0]);
       }
     } catch (InterruptedException e) {};
       
@@ -89,6 +87,8 @@ public class ParallelTextSearch{
         String results = (String)resultsOutputArray.take();
         System.out.println("results:"+results);
         counter++;
+         MessageJNI().writeLongestWordResponseMsg(0, prefix, counter, "/home/ecjackson5/Spring_cs300_project/"+fileList.get(counter), results, treeCount, 1)          
+          
       } catch (InterruptedException e) {};
     }
   }
