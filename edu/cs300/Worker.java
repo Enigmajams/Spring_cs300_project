@@ -26,10 +26,10 @@ class Worker extends Thread{
         boolean found = this.textTrieTree.contains(prefix);
         
         if (!found){
-          System.out.println("Worker-"+this.id+" "+req.requestID+":"+ prefix+" ==> not found ");
+          System.out.println(" ==> not found ");
           resultsOutputArray.put("   ");
         } else{
-          System.out.println("Worker-"+this.id+" "+req.requestID+":"+ prefix+" ==> "+word);
+          System.out.println(" ==> found");
           resultsOutputArray.put(prefix);
         }
       } catch(InterruptedException e){
