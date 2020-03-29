@@ -33,7 +33,7 @@ public class ParallelTextSearch{
             
             File text = new File("/home/ecjackson5/Spring_cs300_project/"+fileList.get(i));
             Scanner sc = new Scanner(text); 
-            sc.useDelimiter("\\W|(?=\\S*['-])([a-zA-Z'-]+)"); //checking regex to obtain the correct delimiter
+            sc.useDelimiter("\\W|(?=\\S*['-])([a-zA-Z'-]+)|(\\b\\w{1,2}\\b)"); //checking regex to obtain the correct delimiter
 
             ArrayList<String> passageArrayList = new ArrayList<String>();
             while(sc.hasNext()){
