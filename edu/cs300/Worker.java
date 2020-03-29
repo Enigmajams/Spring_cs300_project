@@ -30,7 +30,7 @@ class Worker extends Thread{
           resultsOutputArray.put("   ");
         } else{
           System.out.println(" ==> found");
-          resultsOutputArray.put(prefix);
+          resultsOutputArray.put(this.textTrieTree.getLongest(prefix));
         }
       } catch(InterruptedException e){
         System.out.println(e.getMessage());
