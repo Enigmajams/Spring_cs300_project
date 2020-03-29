@@ -26,11 +26,11 @@ class Worker extends Thread{
         boolean found = this.textTrieTree.contains(prefix);
         
         if (!found){
-          //System.out.println("Worker-"+this.id+" "+req.requestID+":"+ prefix+" ==> not found ");
-          resultsOutputArray.put(passageName+":"+prefix+" not found");
+          System.out.println("Worker-"+this.id+" "+req.requestID+":"+ prefix+" ==> not found ");
+          resultsOutputArray.put("   ");
         } else{
-          //System.out.println("Worker-"+this.id+" "+req.requestID+":"+ prefix+" ==> "+word);
-          resultsOutputArray.put(passageName+":"+prefix+" found\n" + "Longest Word with that Prefix = " + this.textTrieTree.getLongest(prefix));
+          System.out.println("Worker-"+this.id+" "+req.requestID+":"+ prefix+" ==> "+word);
+          resultsOutputArray.put(prefix);
         }
       } catch(InterruptedException e){
         System.out.println(e.getMessage());
