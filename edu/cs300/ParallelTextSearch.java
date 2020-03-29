@@ -87,8 +87,10 @@ public class ParallelTextSearch{
         String results = (String)resultsOutputArray.take();
         System.out.println("results:"+results);
         counter++;
-         MessageJNI().writeLongestWordResponseMsg(0, prefix, counter, "/home/ecjackson5/Spring_cs300_project/"+fileList.get(counter), results, treeCount, 1)          
-          
+          if (results == "   ")
+              MessageJNI().writeLongestWordResponseMsg(0, prefix, counter, "/home/ecjackson5/Spring_cs300_project/"+fileList.get(counter), results, treeCount, 0)          
+          else 
+              MessageJNI().writeLongestWordResponseMsg(0, prefix, counter, "/home/ecjackson5/Spring_cs300_project/"+fileList.get(counter), results, treeCount, 1)          
       } catch (InterruptedException e) {};
     }
   }
