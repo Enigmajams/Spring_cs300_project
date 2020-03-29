@@ -86,11 +86,11 @@ public class ParallelTextSearch{
       try {
         String results = (String)resultsOutputArray.take();
         System.out.println("results:"+results);
-        counter++;
-          if (results == "   ")
+        if (results == "   ")
           new MessageJNI().writeLongestWordResponseMsg(0, prefix, counter, "/home/ecjackson5/Spring_cs300_project/"+fileList.get(counter), results, 5, 0);          
-          else 
+        else 
           new MessageJNI().writeLongestWordResponseMsg(0, prefix, counter, "/home/ecjackson5/Spring_cs300_project/"+fileList.get(counter), results, 5, 1);          
+        counter++;
       } catch (InterruptedException e) {};
     }
   }
