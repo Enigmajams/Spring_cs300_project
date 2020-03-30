@@ -65,7 +65,7 @@ public class ParallelTextSearch{
           System.out.println("**Prefix("+ prefixID +") " + prefix + " recieved"); //print out that you've recieved a prefix
           if (prefix.equals("   ")){ //if we got our exit message, tell all threads to quit, then join them, then exit
             try {
-              for (int i = 0; i < numPassages; i++){
+              for (int i = 0; i < numValidPassages; i++){
                 workerQueues[i].put("exit");
               }
 
@@ -78,7 +78,7 @@ public class ParallelTextSearch{
           }
           //otherwise process the prefix
           try {
-          for (int i = 0; i < numPassages; i++){ //for each passage, dump the current prefix in their queue
+          for (int i = 0; i < numValidPassages; i++){ //for each passage, dump the current prefix in their queue
             workerQueues[i].put(prefix); //put a prefix in a workes queue
           }
           } catch (InterruptedException e) {};
