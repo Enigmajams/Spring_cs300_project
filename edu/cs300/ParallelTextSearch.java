@@ -23,7 +23,7 @@ public class ParallelTextSearch{
         int numValidPassages = numPassages; //numValidPassages will contain the number of passages that we can open
 
         ArrayList<String[]> passageArrays = new ArrayList<String[]>();//declares an arraylist of string arrays to store the string arrays take from each file
-        for(int i=0;i<numPassages;i++){ //loop for each file name
+        for(int i=0;i<numValidPassages;i++){ //loop for each file name
             try{
             File text = new File("/home/ecjackson5/Spring_cs300_project/"+fileList.get(i)); //for each file name, open it
             Scanner sc = new Scanner(text); //make a scanner on that file
@@ -37,9 +37,10 @@ public class ParallelTextSearch{
             passageBasicArray = passageArrayList.toArray(passageBasicArray);
             passageArrays.add(passageBasicArray);
             }catch(IOException e){
-              System.out.println("Error, File unable to be opened. Ignoring ... \n");
+              System.out.println("Error, File unable to be opened. Ignoring ... ");
               numValidPassages--; // reduce the number of passages we can read in from
               fileList.remove(i); //remove the file name
+              i--; //this allows us to continue iterating through filelist;
               continue; //skip the rest of the for loop
             }
         }
