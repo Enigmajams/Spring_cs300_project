@@ -91,10 +91,12 @@ int main(int argc, char**argv) //msgsnd
       }
       for (int i = 0; i < passageCount; i++){      
         if (responses[i].present == 1){
-            fprintf(stderr,"%s, %d of %d, %s\n", responses[i].location_description, responses[i].index,responses[i].count,responses[i].longest_word);
+            //fprintf(stderr,"%s, %d of %d, %s\n", responses[i].location_description, responses[i].index,responses[i].count,responses[i].longest_word);
+            fprintf(stderr,"Passage %d - %s - %s\n", responses[i].index, responses[i].location_description, responses[i].longest_word);
         }
         else{
-            fprintf(stderr,"%s, %d of %d, not found\n", responses[i].location_description, responses[i].index,responses[i].count);
+            //fprintf(stderr,"%s, %d of %d, not found\n", responses[i].location_description, responses[i].index,responses[i].count);
+            fprintf(stderr,"Passage %d - %s - no word found\n", responses[i].index, responses[i].location_description);
         }
       }
       }
