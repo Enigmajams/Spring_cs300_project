@@ -27,6 +27,7 @@ strlcpy(char       *dst,      /* O - Destination string */
 }
 int getMSQID() {
   int msqid;
+  key_t key = ftok(CRIMSON_ID,QUEUE_NUMBER); //grab queue key
   int msgflg = IPC_CREAT | 0666;
   if ((msqid = msgget(key, msgflg)) < 0) {//connecting to queue and error message if < 0
       int errnum = errno;
@@ -55,7 +56,7 @@ response_buf getResponse() {
 
   return rbuf;
 }
-void sendMessage(int type, int id, string prefix){
+void sendMessage(int type, int id, char* prefix){
   prefix_buf sbuf;
   size_t buf_length;
   int msqid = getMSQID();
