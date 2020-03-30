@@ -5,96 +5,85 @@ import java.util.ArrayList;
 import java.util.concurrent.*;
 import java.util.Scanner;
 
-
 public class ParallelTextSearch{
-
   public static void main(String[] args){
     try{
         File passages = new File("/home/ecjackson5/Spring_cs300_project/passages.txt");
         Scanner passageNameReader = new Scanner(passages);
         ArrayList<String> fileList = new ArrayList<String>();
-        while(passageNameReader.hasNext()){
+        while(passageNameReader.hasNext()){ //for each passage name in passage text add it to the file list
             fileList.add(passageNameReader.next());
         }
-        int numPassages = fileList.size();
         //at this point filelist should contain all the file names
+        int numPassages = fileList.size();
+
+
         ArrayList<String[]> passageArrays = new ArrayList<String[]>();
-        for(int i=0;i<numPassages;i++){
-
-            File text = new File("/home/ecjackson5/Spring_cs300_project/"+fileList.get(i));
-            Scanner sc = new Scanner(text);
-            sc.useDelimiter("\\W|(?=\\S*['-])([a-zA-Z'-]+)|(\\b\\w{1,2}\\b)"); //checking regex to obtain the correct delimiter
-
-            ArrayList<String> passageArrayList = new ArrayList<String>();
-            while(sc.hasNext()){
-                passageArrayList.add(sc.next());
+        for(int i=0;i<numPassages;i++){ //loop for
+            File text = new File("/home/ecjackson5/Spring_cs300_project/"+fileList.get(i)); //for each file name, open it
+            Scanner sc = new Scanner(text); //make a scanner on that file
+            sc.useDelimiter("\\W|(?=\\S*['-])([a-zA-Z'-]+)|(\\b\\w{1,2}\\b)"); //delimiter is, anything not a word, any word with ' or - in it, and any word less than 3 characters
+            ArrayList<String> passageArrayList = new ArrayList<String>(); //make an arraylist for each string you read in
+            while(sc.hasNext()){ //loop until there are no more valid tokens
+                passageArrayList.add(sc.next()); //add a token to the arraylist
             }
 
             String[] passageBasicArray = new String[passageArrayList.size()];
             passageBasicArray = passageArrayList.toArray(passageBasicArray);
             passageArrays.add(passageBasicArray);
         }
-        //Theoretically the passageArrays arraylist now contains all the file strings
-        int treeCount = numPassages;
-        ArrayBlockingQueue[] workerQueues = new ArrayBlockingQueue[treeCount];
-        ArrayBlockingQueue resultsOutputArray = new ArrayBlockingQueue(treeCount*10);
+        //Theoretically the passageArrays arraylist now contains all the file name strings
+        int treeCount = numPassages; //sets the number of workers to make
+        ArrayBlockingQueue[] workerQueues = new ArrayBlockingQueue[treeCount]; //makes an array of queues for each worker
+        ArrayBlockingQueue resultsOutputArray = new ArrayBlockingQueue(treeCount*10); // makes a queue for returning values
 
-        for (int i=0;i<treeCount;i++) {
-          workerQueues[i] = new ArrayBlockingQueue(10);
+        for (int i=0;i<treeCount;i++) {//for each worker, assigns a queue to the array
+          workerQueues[i] = new ArrayBlockingQueue(10); //assigns queues to array slots
         }
-        ArrayList<Worker> workers = new ArrayList<Worker>();
-        for (int i = 0; i < numPassages; i++){
-          workers.add(new Worker(passageArrays.get(i),i,workerQueues[i],resultsOutputArray));
-          workers.get(i).start();
+        ArrayList<Worker> workers = new ArrayList<Worker>(); //makes an arraylist of type worker to reference later when we need to start and exit
+        for (int i = 0; i < numPassages; i++){ //for each worker, intialize and start the thread
+          workers.add(new Worker(passageArrays.get(i),i,workerQueues[i],resultsOutputArray));//intialize a worker and put it in the array list
+          workers.get(i).start();//start a worker
         }
 
-
-        while(true){
-          SearchRequest prefixRequest = new MessageJNI().readPrefixRequestMsg();
-          String prefix =prefixRequest.prefix;
-          int prefixID = prefixRequest.requestID; 
-          System.out.println("**Prefix("+ prefixID +") " + prefix + " recieved");
-          if (prefix.equals("   ")){
-            //Exit
+        while(true){ //loop until we recieve a message of "   "
+          SearchRequest prefixRequest = new MessageJNI().readPrefixRequestMsg(); //grab a new message
+          String prefix =prefixRequest.prefix; //grab the prefix from the message struct
+          int prefixID = prefixRequest.requestID; //grab the prefix ID fromn the struct
+          System.out.println("**Prefix("+ prefixID +") " + prefix + " recieved"); //print out that you've recieved a prefix
+          if (prefix.equals("   ")){ //if we got our exit message, tell all threads to quit, then join them, then exit
             try {
               for (int i = 0; i < numPassages; i++){
                 workerQueues[i].put("exit");
               }
-                       
-            for (Worker worker : workers) {              
+
+            for (Worker worker : workers) {
                 worker.join();
             }
-            } catch (InterruptedException e) {}; 
+            } catch (InterruptedException e) {};
             System.out.println("Terminating ... \n");
             System.exit(0);
           }
-
-
+          //otherwise process the prefix
           try {
-            for (int i = 0; i < numPassages; i++){
-            workerQueues[i].put(prefix);
-            }
+          for (int i = 0; i < numPassages; i++){ //for each passage, dump the current prefix in their queue
+            workerQueues[i].put(prefix); //put a prefix in a workes queue
+          }
           } catch (InterruptedException e) {};
 
-
-          int counter=0;
-          while (counter<treeCount){
+          for(int counter=0;counter<treeCount;counter++){ //this loop runs until we get all the messages from all the workers on the current prefix
             try {
-              String results = (String)resultsOutputArray.take();
-              Scanner resultScanner = new Scanner(results);
-                  resultScanner.useDelimiter(":");
-              String longestWord = resultScanner.next();
-              int threadID = resultScanner.nextInt();
-              //System.out.println("results:"+results);
-              if (longestWord.equals("___")){
+              String results = (String)resultsOutputArray.take(); //pull a result off the queue
+              Scanner resultScanner = new Scanner(results); //we use a scanner to interpret the results
+                  resultScanner.useDelimiter(":"); //using a : as a delimiter instead of whitespace to avoid any weird whitespace issues
+              String longestWord = resultScanner.next(); //grab the longestWord
+              int threadID = resultScanner.nextInt(); //grab the threads ID
+              if (longestWord.equals("___")){ //if there is no word with that prefix, we send a message back saying there isnt one (present = 0)
                 new MessageJNI().writeLongestWordResponseMsg(prefixID, prefix, threadID, fileList.get(threadID), longestWord, treeCount, 0);
-                //System.out.println("Longest Word doesnt exist and here it is = \""+ longestWord +"\"");
               }
-              else{
+              else{ //otherwise we send back the longest word, with present = 1
                 new MessageJNI().writeLongestWordResponseMsg(prefixID, prefix, threadID, fileList.get(threadID), longestWord, treeCount, 1);
-               //System.out.println("Longest Word exists and here it is = \""+ longestWord +"\"");
               }
-              counter++;
             } catch (InterruptedException e) {};
           }
         }
