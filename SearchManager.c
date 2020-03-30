@@ -34,8 +34,8 @@ int main(int argc, char**argv) //msgsnd
     prefix_buf sbuf;
     size_t buf_length;
     response_buf rbuf;
-
-    int delay = atoi(argv[1]);
+    int delay;
+    
     int prefixIndexes[argc];//This will store the index in argv[] of each
     int validPrefixes = 0;
     if (argc < 3 ) {//Error out because no prefix
@@ -59,7 +59,7 @@ int main(int argc, char**argv) //msgsnd
       fprintf(stderr,"Error: please provide at least one valid prefix of at least two characters for search\n");
       exit(-1);
     }
-
+    delay = atoi(argv[1]);
 
 
     key = ftok(CRIMSON_ID,QUEUE_NUMBER); //grab queue key
