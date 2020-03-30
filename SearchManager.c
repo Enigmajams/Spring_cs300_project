@@ -72,7 +72,7 @@ int main(int argc, char**argv) //msgsnd
 
     for (int j = 0; j < validPrefixes; j++){//this loop runs for each valid prefix
       sbuf.mtype = 1; //this is a tpye one message
-      strlcpy(sbuf.prefix,argv[validPrefixes[j]],WORD_LENGTH); //put the first valid prefix in the struct
+      strlcpy(sbuf.prefix,argv[prefixIndexes[j]],WORD_LENGTH); //put the first valid prefix in the struct
       sbuf.id=0; //id is zero cause its an actual message
       buf_length = strlen(sbuf.prefix) + sizeof(int)+1;//struct size without long int type
 
@@ -105,7 +105,7 @@ int main(int argc, char**argv) //msgsnd
         responses[rbuf.index] = rbuf;//adds the message to its slot in the order in rbuf
         passageCount = rbuf.count;//updates passageCount to the number of messages that PP is sending
       }
-      fprintf(stdout,"Report \"%s\"\n", argv[validPrefixes[j]]); // Report "prefix"
+      fprintf(stdout,"Report \"%s\"\n", argv[prefixIndexes[j]]); // Report "prefix"
       for (int i = 0; i < passageCount; i++){ //runs for each passage
         if (responses[i].present == 1){//checks if each message struct has a longest Word and displays it if it does
             //fprintf(stderr,"%s, %d of %d, %s\n", responses[i].location_description, responses[i].index,responses[i].count,responses[i].longest_word);
