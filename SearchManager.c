@@ -5,6 +5,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include <errno.h>
+#include <unistd.h>
 #include "longest_word_search.h"
 #include "queue_ids.h"
 
@@ -34,16 +35,20 @@ int main(int argc, char**argv) //msgsnd
     size_t buf_length;
     response_buf rbuf;
 
+    int delay = argv[1];
     int prefixIndexes[argc];//This will store the index in argv[] of each
     int validPrefixes = 0;
-    if (argc <= 1 ) {//Error out because no prefix
-        fprintf(stderr,"Error: please provide at least one prefix of at least two characters for search\n");
-        fprintf(stderr,"Usage: %s <prefix>\n",argv[0]);
+    if (argc <= 3 ) {//Error out because no prefix
+        fprintf(stderr,"Error: please provide at least one prefix of at least two characters, and a time\n");
+        fprintf(stderr,"Usage: %s <time> <prefix>\n",argv[0]);
         exit(-1);
     }
-    for(int i = 1; i < argc; i++){//if prefixes are invalid ignore them
+    for(int i = 2; i < argc; i++){//if prefixes are invalid ignore them
       if (strlen(argv[i]) <=2){//Prefix too short
         fprintf(stderr,"\"%s\" is too short to be a valid prefix.\nIgnoring ... \n\n",argv[i]);
+      }
+      else if(strlen(argv[i]) >=21){//Prefix too long
+        fprintf(stderr,"\"%s\" is too long to be a valid prefix.\nIgnoring ... \n\n",argv[i]);
       }
       else{//prefix is fine, add the index to our array
         prefixIndexes[validPrefixes] = i;
@@ -108,15 +113,14 @@ int main(int argc, char**argv) //msgsnd
       fprintf(stdout,"Report \"%s\"\n", argv[prefixIndexes[j]]); // Report "prefix"
       for (int i = 0; i < passageCount; i++){ //runs for each passage
         if (responses[i].present == 1){//checks if each message struct has a longest Word and displays it if it does
-            //fprintf(stderr,"%s, %d of %d, %s\n", responses[i].location_description, responses[i].index,responses[i].count,responses[i].longest_word);
             fprintf(stdout,"Passage %d - %s - %s\n", responses[i].index, responses[i].location_description, responses[i].longest_word);
         }
         else{//No word found
-            //fprintf(stderr,"%s, %d of %d, not found\n", responses[i].location_description, responses[i].index,responses[i].count);
             fprintf(stdout,"Passage %d - %s - no word found\n", responses[i].index, responses[i].location_description);
         }
       }
       fprintf(stdout,"\n");//spacing out each report at the end
+      if(delay > 0){sleep(delay);}//if we have a delay, wait before sending the next prefix
       }
 
       {//send empty message to tell PP to quit
@@ -136,7 +140,7 @@ int main(int argc, char**argv) //msgsnd
             fprintf(stdout,"Message(%d): \"%s\" Sent (%d bytes)\n\n", sbuf.id, sbuf.prefix,(int)buf_length);
         }
       }
-  fprintf(stdout," Exiting ... \n");//Finished up, let the user know
+  fprintf(stdout,"Exiting ... \n");//Finished up, let the user know
 
   exit(0);//exit
 }
