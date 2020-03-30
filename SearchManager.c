@@ -79,7 +79,7 @@ int main(int argc, char**argv) //msgsnd
             fprintf(stdout,"Passage %d - %s - no word found\n", responses[i].index, responses[i].location_description);
         }
       }
-      fprintf(stderr,"\n Delaying by %d\n", delay);//spacing out each report at the end for clarity
+      //fprintf(stderr,"\n Delaying by %d\n", delay);//spacing out each report at the end for clarity
       if(delay > 0){sleep(delay);}//if we have a delay, wait before sending the next prefix
     }
 
