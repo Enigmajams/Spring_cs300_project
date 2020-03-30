@@ -44,7 +44,7 @@ public class TrieNode {
 		longestSubString = word;
 	}	    
 	else if(word.length() == longestSubString.length()){
-		if (word.compareTo(longestSubString)=0){
+		if (word.compareTo(longestSubString)==0){
 			return;
 		}
 		if (word.compareTo(longestSubString)>0){
