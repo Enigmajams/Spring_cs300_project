@@ -27,10 +27,10 @@ class Worker extends Thread{
         
         if (!found){
           System.out.println(" ==> not found ");
-          resultsOutputArray.put("   ");
+          resultsOutputArray.put("   :"+id);
         } else{
           System.out.println(" ==> found");
-          resultsOutputArray.put(this.textTrieTree.getLongest(prefix));
+          resultsOutputArray.put(this.textTrieTree.getLongest(prefix) + ":" + id);
         }
       } catch(InterruptedException e){
         System.out.println(e.getMessage());
