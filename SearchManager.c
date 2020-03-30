@@ -26,6 +26,68 @@ strlcpy(char       *dst,      /* O - Destination string */
     return (srclen);
 }
 
+int getMSQID();
+response_buf getResponse(int msqid);
+void sendMessage(int type, int id,int msqid, char* prefix);
+
+int main(int argc, char**argv) //msgsnd
+{
+    int prefixIndexes[argc];//This will store the index in argv[] of each
+    int validPrefixes = 0;
+    if (argc < 3 ) {//Error out because no prefix
+        fprintf(stderr,"Error: please provide at least one prefix of at least two characters, and a time\n");
+        fprintf(stderr,"Usage: %s <time> <prefix>\n",argv[0]);
+        exit(-1);
+    }
+    for(int i = 2; i < argc; i++){//if prefixes are invalid ignore them
+      if (strlen(argv[i]) <=2){//Prefix too short
+        fprintf(stderr,"\"%s\" is too short to be a valid prefix.\nIgnoring ... \n\n",argv[i]);
+      }
+      else if(strlen(argv[i]) >=21){//Prefix too long
+        fprintf(stderr,"\"%s\" is too long to be a valid prefix.\nIgnoring ... \n\n",argv[i]);
+      }
+      else{//prefix is fine, add the index to our array
+        prefixIndexes[validPrefixes] = i;
+        validPrefixes ++;
+      }
+    }
+    if (validPrefixes < 1){//Check to see if we have disqaulified all prefixes
+      fprintf(stderr,"Error: please provide at least one valid prefix of at least two characters for search\n");
+      exit(-1);
+    }
+
+    int msqid = getMSQID();
+    int delay= atoi(argv[1]);
+    response_buf rbuf;
+
+    for (int j = 0; j < validPrefixes; j++){//this loop runs for each valid prefix
+      sendMessage(1, j+1, msqid, argv[prefixIndexes[j]]);//send a message
+      rbuf = getResponse(msqid); //get a response
+      response_buf responses[rbuf.count]; //creates array of size(number of passages)
+      int passageCount = rbuf.count; //takes down thenumber of passages for the loop
+      responses[rbuf.index] = rbuf; //adds the message to its slot in the order in rbuf
+      for(int i = 1; i < passageCount; i++){//loop for all responses back for this prefix
+        rbuf = getResponse(msqid);//grabs the response
+        responses[rbuf.index] = rbuf;//adds the message to its slot in the order in rbuf
+      }
+      fprintf(stdout,"Report \"%s\"\n", argv[prefixIndexes[j]]); // Report "prefix"
+      for (int i = 0; i < passageCount; i++){ //runs for each passage and prints "Passage %d - %s - %s\n" if found, "Passage %d - %s - no word found\n" if not
+        if (responses[i].present == 1){//checks if each message struct has a longest Word and displays it if it does
+            fprintf(stdout,"Passage %d - %s - %s\n", responses[i].index, responses[i].location_description, responses[i].longest_word);
+        }
+        else{//No word found
+            fprintf(stdout,"Passage %d - %s - no word found\n", responses[i].index, responses[i].location_description);
+        }
+      }
+      fprintf(stdout,"\n Delaying by %d\n", delay);//spacing out each report at the end
+      if(delay > 0){sleep(delay);}//if we have a delay, wait before sending the next prefix
+    }
+
+    sendMessage(1, 0, msqid, "   ");//send empty message to tell PP to quit
+    fprintf(stdout,"Exiting ... \n");//Finished up, let the user know
+    exit(0);//exit
+}
+
 int getMSQID() {
   int msqid;
   key_t key = ftok(CRIMSON_ID,QUEUE_NUMBER); //grab queue key
@@ -76,71 +138,4 @@ void sendMessage(int type, int id,int msqid, char* prefix){
       fprintf(stdout,"Message(%d): \"%s\" Sent (%d bytes)\n\n", sbuf.id, sbuf.prefix,(int)buf_length);
   }
 
-}
-
-
-
-int main(int argc, char**argv) //msgsnd
-{
-
-    int prefixIndexes[argc];//This will store the index in argv[] of each
-    int validPrefixes = 0;
-    if (argc < 3 ) {//Error out because no prefix
-        fprintf(stderr,"Error: please provide at least one prefix of at least two characters, and a time\n");
-        fprintf(stderr,"Usage: %s <time> <prefix>\n",argv[0]);
-        exit(-1);
-    }
-    for(int i = 2; i < argc; i++){//if prefixes are invalid ignore them
-      if (strlen(argv[i]) <=2){//Prefix too short
-        fprintf(stderr,"\"%s\" is too short to be a valid prefix.\nIgnoring ... \n\n",argv[i]);
-      }
-      else if(strlen(argv[i]) >=21){//Prefix too long
-        fprintf(stderr,"\"%s\" is too long to be a valid prefix.\nIgnoring ... \n\n",argv[i]);
-      }
-      else{//prefix is fine, add the index to our array
-        prefixIndexes[validPrefixes] = i;
-        validPrefixes ++;
-      }
-    }
-    if (validPrefixes < 1){//Check to see if we have disqaulified all prefixes
-      fprintf(stderr,"Error: please provide at least one valid prefix of at least two characters for search\n");
-      exit(-1);
-    }
-    delay = atoi(argv[1]);
-
-    int msqid = getMSQID();
-    int delay;
-
-
-
-    for (int j = 0; j < validPrefixes; j++){//this loop runs for each valid prefix
-
-      sendMessage(1, j+1, msqid, argv[prefixIndexes[j]]);//send a message
-      rbuf = getResponse(msqid); //get a response
-
-      response_buf responses[rbuf.count]; //creates array of size(number of passages)
-      int passageCount = rbuf.count; //takes down thenumber of passages for the loop
-      responses[rbuf.index] = rbuf; //adds the message to its slot in the order in rbuf
-
-      for(int i = 1; i < passageCount; i++){//loop for all responses back for this prefix
-        rbuf = getResponse(msqid);//grabs the response
-        responses[rbuf.index] = rbuf;//adds the message to its slot in the order in rbuf
-      }
-
-      fprintf(stdout,"Report \"%s\"\n", argv[prefixIndexes[j]]); // Report "prefix"
-      for (int i = 0; i < passageCount; i++){ //runs for each passage and prints "Passage %d - %s - %s\n" if found, "Passage %d - %s - no word found\n" if not
-        if (responses[i].present == 1){//checks if each message struct has a longest Word and displays it if it does
-            fprintf(stdout,"Passage %d - %s - %s\n", responses[i].index, responses[i].location_description, responses[i].longest_word);
-        }
-        else{//No word found
-            fprintf(stdout,"Passage %d - %s - no word found\n", responses[i].index, responses[i].location_description);
-        }
-      }
-      fprintf(stdout,"\n Delaying by %d\n", delay);//spacing out each report at the end
-      if(delay > 0){sleep(delay);}//if we have a delay, wait before sending the next prefix
-    }
-
-    sendMessage(1, 0, msqid, "   ");//send empty message to tell PP to quit
-    fprintf(stdout,"Exiting ... \n");//Finished up, let the user know
-    exit(0);//exit
 }
