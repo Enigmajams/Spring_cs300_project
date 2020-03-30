@@ -23,12 +23,6 @@ public class ParallelTextSearch{
             try{
             File text = new File("/home/ecjackson5/Spring_cs300_project/"+fileList.get(i)); //for each file name, open it
             Scanner sc = new Scanner(text); //make a scanner on that file
-            }catch(IOException e){
-              System.err.println("Error, File unable to be opened. Ignoring ... \n");
-              numValidPassages--; // reduce the number of passages we can read in from
-              fileList.remove(i); //remove the file name
-              continue; //skip the rest of the for loop
-            }
             sc.useDelimiter("\\W|(?=\\S*['-])([a-zA-Z'-]+)|(\\b\\w{1,2}\\b)"); //delimiter is, anything not a word, any word with ' or - in it, and any word less than 3 characters
             ArrayList<String> passageArrayList = new ArrayList<String>(); //make an arraylist for each string you read in
             while(sc.hasNext()){ //loop until there are no more valid tokens
@@ -38,6 +32,12 @@ public class ParallelTextSearch{
             String[] passageBasicArray = new String[passageArrayList.size()];
             passageBasicArray = passageArrayList.toArray(passageBasicArray);
             passageArrays.add(passageBasicArray);
+            }catch(IOException e){
+              System.err.println("Error, File unable to be opened. Ignoring ... \n");
+              numValidPassages--; // reduce the number of passages we can read in from
+              fileList.remove(i); //remove the file name
+              continue; //skip the rest of the for loop
+            }
         }
         //Theoretically the passageArrays arraylist now contains all the file name strings
         int treeCount = numValidPassages; //sets the number of workers to make
