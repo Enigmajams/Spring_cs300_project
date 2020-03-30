@@ -87,7 +87,7 @@ public class ParallelTextSearch{
               String longestWord = resultScanner.next();
               int threadID = resultScanner.nextInt();
               //System.out.println("results:"+results);
-              if (longestWord == "   "){
+              if (longestWord == "___"){
                 new MessageJNI().writeLongestWordResponseMsg(0, prefix, threadID, fileList.get(threadID), longestWord, treeCount, 0);
                 System.out.println("Longest Word doesnt exist and here it is = \""+ longestWord +"\"");
               }
