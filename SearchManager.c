@@ -32,7 +32,7 @@ void sendMessage(int type, int id,int msqid, char* prefix);
 
 int main(int argc, char**argv) //msgsnd
 {
-    int prefixIndexes[argc];//This will store the index in argv[] of each
+    int prefixIndexes[argc];//This will store the index in argv[] of each valid prefiix
     int validPrefixes = 0;
     if (argc < 3 ) {//Error out because no prefix
         fprintf(stderr,"Error: please provide at least one prefix of at least two characters, and a time\n");
@@ -61,7 +61,7 @@ int main(int argc, char**argv) //msgsnd
     response_buf rbuf;
 
     for (int j = 0; j < validPrefixes; j++){//this loop runs for each valid prefix
-      sendMessage(1, j+1, msqid, argv[prefixIndexes[j]]);//send a message
+      sendMessage(1, j+1, msqid, argv[prefixIndexes[j]]);//send a message of each prefix
       rbuf = getResponse(msqid); //get a response
       response_buf responses[rbuf.count]; //creates array of size(number of passages)
       int passageCount = rbuf.count; //takes down thenumber of passages for the loop
