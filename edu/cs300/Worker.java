@@ -20,7 +20,7 @@ class Worker extends Thread{
 
   public void run() {
     System.out.println("Worker-"+this.id+" ("+this.passageName+") thread started ...");
-    //while (true){
+    while (true){
       try {
         String prefix=(String)this.prefixRequestArray.take();
         if(prefix == "exit"){
@@ -38,7 +38,7 @@ class Worker extends Thread{
       } catch(InterruptedException e){
         System.out.println(e.getMessage());
       }
-    //}
+    }
   }
 
 }
