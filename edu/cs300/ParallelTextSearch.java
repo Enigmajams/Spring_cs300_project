@@ -15,7 +15,7 @@ public class ParallelTextSearch{
             fileList.add(passageNameReader.next());
         }
         }catch(IOException e){
-          System.err.println("Error, Passage.txt unable to be opened. Exiting ... \n");
+          System.out.println("Error, Passage.txt unable to be opened. Exiting ... \n");
           return;
         }
         //at this point filelist should contain all the file names
@@ -37,7 +37,7 @@ public class ParallelTextSearch{
             passageBasicArray = passageArrayList.toArray(passageBasicArray);
             passageArrays.add(passageBasicArray);
             }catch(IOException e){
-              System.err.println("Error, File unable to be opened. Ignoring ... \n");
+              System.out.println("Error, File unable to be opened. Ignoring ... \n");
               numValidPassages--; // reduce the number of passages we can read in from
               fileList.remove(i); //remove the file name
               continue; //skip the rest of the for loop
