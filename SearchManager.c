@@ -51,12 +51,12 @@ int main(int argc, char**argv) //msgsnd
     else
         fprintf(stderr, "msgget: msgget succeeded: msgqid = %d\n", msqid);
 
-    int validPrefix = argc-1;
+    int validPrefix = argc;
 
-    for (int i = 0; i < validPrefix; i++){
+    for (int i = 1; i < validPrefix; i++){
       // We'll send message type 1
       sbuf.mtype = 1;
-      strlcpy(sbuf.prefix,argv[validPrefix],WORD_LENGTH);
+      strlcpy(sbuf.prefix,argv[i],WORD_LENGTH);
       sbuf.id=0;
       buf_length = strlen(sbuf.prefix) + sizeof(int)+1;//struct size without long int type
 
