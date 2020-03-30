@@ -6,13 +6,17 @@ import java.util.concurrent.*;
 import java.util.Scanner;
 
 public class ParallelTextSearch{
-  public static void main(String[] args){
-    try{
+  public static void main(String[] args){ 
+        ArrayList<String> fileList = new ArrayList<String>(); 
+        try{
         File passages = new File("/home/ecjackson5/Spring_cs300_project/passages.txt");
-        Scanner passageNameReader = new Scanner(passages);
-        ArrayList<String> fileList = new ArrayList<String>();
+        Scanner passageNameReader = new Scanner(passages);        
         while(passageNameReader.hasNext()){ //for each passage name in passage text add it to the file list
             fileList.add(passageNameReader.next());
+        }
+        }catch(IOException e){
+          System.err.println("Error, Passage.txt unable to be opened. Exiting ... \n");
+          return;
         }
         //at this point filelist should contain all the file names
         int numPassages = fileList.size(); //numpassages will contain the total number of file names
@@ -94,10 +98,5 @@ public class ParallelTextSearch{
             } catch (InterruptedException e) {};
           }
         }
-      }
-      catch (IOException e) {
-        System.out.println("Error: File not found\n");
-        return;
-      }
-    }
+     }
   }
