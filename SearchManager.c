@@ -105,7 +105,7 @@ int main(int argc, char**argv) //msgsnd
   //SEND EXIT
         
       sbuf.mtype = 1;
-      strlcpy(sbuf.prefix,"   ");
+      strlcpy(sbuf.prefix,"   ",sizeof("   "));
       sbuf.id=1;
       buf_length = strlen(sbuf.prefix) + sizeof(int)+1;
       
