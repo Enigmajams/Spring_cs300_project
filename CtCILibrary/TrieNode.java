@@ -42,7 +42,15 @@ public class TrieNode {
     	}
     	if (word.length() > longestSubString.length()){
 		longestSubString = word;
-	}
+	}	    
+	else if(word.length() == longestSubString.length()){
+		if (word.compareTo(longestSubString)=0){
+			return;
+		}
+		if (word.compareTo(longestSubString)>0){
+			longestSubString = word;
+		}
+	}   
         char firstChar = word.charAt(0);
 
         TrieNode child = getChild(firstChar);
