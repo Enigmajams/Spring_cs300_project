@@ -53,7 +53,7 @@ public class ParallelTextSearch{
           workerQueues[i] = new ArrayBlockingQueue(10); //assigns queues to array slots
         }
         ArrayList<Worker> workers = new ArrayList<Worker>(); //makes an arraylist of type worker to reference later when we need to start and exit
-        for (int i = 0; i < numPassages; i++){ //for each worker, intialize and start the thread
+        for (int i = 0; i < numValidPassages; i++){ //for each worker, intialize and start the thread
           workers.add(new Worker(passageArrays.get(i),i,workerQueues[i],resultsOutputArray));//intialize a worker and put it in the array list
           workers.get(i).start();//start a worker
         }
