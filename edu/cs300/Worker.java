@@ -8,6 +8,7 @@ class Worker extends Thread{
   ArrayBlockingQueue prefixRequestArray;
   ArrayBlockingQueue resultsOutputArray;
   int id;
+  int prefixCounter;
   String passageName;
 
   public Worker(String[] words,int id,ArrayBlockingQueue prefix, ArrayBlockingQueue results){
@@ -20,6 +21,7 @@ class Worker extends Thread{
 
   public void run() {
     System.out.println("Worker-"+this.id+" ("+this.passageName+") thread started ...");
+    prefixCounter = 0;
     while (true){
       try {
         String prefix=(String)this.prefixRequestArray.take();
@@ -29,10 +31,10 @@ class Worker extends Thread{
         boolean found = this.textTrieTree.contains(prefix);
         
         if (!found){          
-          System.out.println("Worker-"+this.id+" " + "</here be the prefix number>" + ":"+ prefix+" ==> not found ");
+          System.out.println("Worker-"+this.id+" " + (++PrefixCounter) + ":"+ prefix+" ==> not found ");
           resultsOutputArray.put("___:"+id);
         } else{
-          System.out.println("Worker-"+this.id+" "+"/here be the prefix number>"+":"+ prefix+" ==> "+this.textTrieTree.getLongest(prefix));
+          System.out.println("Worker-"+this.id+" "+ (++PrefixCounter) +":"+ prefix+" ==> "+this.textTrieTree.getLongest(prefix));
           resultsOutputArray.put(this.textTrieTree.getLongest(prefix) + ":" + id);
         }
       } catch(InterruptedException e){
