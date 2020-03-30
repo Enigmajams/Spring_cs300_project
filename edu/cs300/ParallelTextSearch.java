@@ -52,7 +52,7 @@ public class ParallelTextSearch{
         while(true){
           SearchRequest prefixRequest = new MessageJNI().readPrefixRequestMsg();
           String prefix =prefixRequest.prefix;
-          int prefixId = prefixRequest.requestID; 
+          int prefixID = prefixRequest.requestID; 
           System.out.println("**Prefix("+ prefixID +") " + prefix + "recieved");
           if (prefix.equals("   ")){
             //Exit
