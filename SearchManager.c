@@ -53,10 +53,10 @@ int main(int argc, char**argv) //msgsnd
 
     int validPrefix = argc;
 
-    for (int i = 1; i < validPrefix; i++){
+    for (int j = 1; j < validPrefix; j++){
       // We'll send message type 1
       sbuf.mtype = 1;
-      strlcpy(sbuf.prefix,argv[i],WORD_LENGTH);
+      strlcpy(sbuf.prefix,argv[j],WORD_LENGTH);
       sbuf.id=0;
       buf_length = strlen(sbuf.prefix) + sizeof(int)+1;//struct size without long int type
 
@@ -68,7 +68,7 @@ int main(int argc, char**argv) //msgsnd
           exit(1);
       }
       else{//SUCESS, PRINT SUCESS
-          fprintf(stderr,"Message(%d): \"%s\" Sent (%d bytes)\n", sbuf.id, sbuf.prefix,(int)buf_length);
+          fprintf(stdout,"Message(%d): \"%s\" Sent (%d bytes)\n\n", sbuf.id, sbuf.prefix,(int)buf_length);
       }
 
 
@@ -89,6 +89,7 @@ int main(int argc, char**argv) //msgsnd
         responses[rbuf.index] = rbuf;
         passageCount = rbuf.count;
       }
+      fprintf(stdout,"Report \"%s\"\n", argv[j]);
       for (int i = 0; i < passageCount; i++){      
         if (responses[i].present == 1){
             //fprintf(stderr,"%s, %d of %d, %s\n", responses[i].location_description, responses[i].index,responses[i].count,responses[i].longest_word);
@@ -101,5 +102,22 @@ int main(int argc, char**argv) //msgsnd
       }
       }
   //SEND EXIT
+  /*
+      sbuf.mtype = 1;
+      strlcpy(sbuf.prefix,argv[j],WORD_LENGTH);
+      sbuf.id=0;
+      buf_length = strlen(sbuf.prefix) + sizeof(int)+1;
+      
+        if((msgsnd(msqid, &sbuf, buf_length, IPC_NOWAIT)) < 0) {//SEND MESSAGE AND CHECK FOR ERROR
+          int errnum = errno;
+          fprintf(stderr,"%d, %ld, %s, %d\n", msqid, sbuf.mtype, sbuf.prefix, (int)buf_length);
+          perror("(msgsnd)");
+          fprintf(stderr, "Error sending msg: %s\n", strerror( errnum ));
+          exit(1);
+      }
+      else{//SUCESS, PRINT SUCESS
+          fprintf(stdout,"Message(%d): \"%s\" Sent (%d bytes)\n\n", sbuf.id, sbuf.prefix,(int)buf_length);
+      }
+  */
   exit(0);
 }
