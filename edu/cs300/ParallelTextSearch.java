@@ -40,7 +40,7 @@ public class ParallelTextSearch{
         ArrayBlockingQueue resultsOutputArray = new ArrayBlockingQueue(treeCount*10);
 
         for (int i=0;i<treeCount;i++) {
-          workers[i] = new ArrayBlockingQueue(10);
+          workerQueues[i] = new ArrayBlockingQueue(10);
         }
         ArrayList<Worker> workers = new ArrayList<Worker>();
         for (int i = 0; i < numPassages; i++){
