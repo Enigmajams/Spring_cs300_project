@@ -30,7 +30,7 @@ class Worker extends Thread{
         
         if (!found){
           System.out.println(" ==> not found ");
-          resultsOutputArray.put("   :"+id);
+          resultsOutputArray.put("___:"+id);
         } else{
           System.out.println(" ==> found");
           resultsOutputArray.put(this.textTrieTree.getLongest(prefix) + ":" + id);
