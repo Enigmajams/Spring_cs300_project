@@ -52,7 +52,8 @@ public class ParallelTextSearch{
         while(true){
           SearchRequest prefixRequest = new MessageJNI().readPrefixRequestMsg();
           String prefix =prefixRequest.prefix;
-          System.out.println("**Prefix("+ prefixRequest.requestID +") " + prefix + "recieved");
+          int prefixId = prefixRequest.requestID; 
+          System.out.println("**Prefix("+ prefixID +") " + prefix + "recieved");
           if (prefix.equals("   ")){
             //Exit
             try {
@@ -85,11 +86,11 @@ public class ParallelTextSearch{
               int threadID = resultScanner.nextInt();
               //System.out.println("results:"+results);
               if (longestWord.equals("___")){
-                new MessageJNI().writeLongestWordResponseMsg(0, prefix, threadID, fileList.get(threadID), longestWord, treeCount, 0);
+                new MessageJNI().writeLongestWordResponseMsg(prefixID, prefix, threadID, fileList.get(threadID), longestWord, treeCount, 0);
                 //System.out.println("Longest Word doesnt exist and here it is = \""+ longestWord +"\"");
               }
               else{
-                new MessageJNI().writeLongestWordResponseMsg(0, prefix, threadID, fileList.get(threadID), longestWord, treeCount, 1);
+                new MessageJNI().writeLongestWordResponseMsg(prefixID, prefix, threadID, fileList.get(threadID), longestWord, treeCount, 1);
                //System.out.println("Longest Word exists and here it is = \""+ longestWord +"\"");
               }
               counter++;
