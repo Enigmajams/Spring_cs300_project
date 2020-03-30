@@ -35,7 +35,7 @@ int main(int argc, char**argv) //msgsnd
     size_t buf_length;
     response_buf rbuf;
 
-    int delay = argv[1];
+    int delay = atoi(argv[1]);
     int prefixIndexes[argc];//This will store the index in argv[] of each
     int validPrefixes = 0;
     if (argc <= 3 ) {//Error out because no prefix
