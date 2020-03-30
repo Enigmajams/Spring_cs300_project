@@ -48,52 +48,51 @@ public class ParallelTextSearch{
         }
 
 
-while(true){
-        SearchRequest test = new MessageJNI().readPrefixRequestMsg();
-        String prefix = test.prefix;
-        if (prefix.length() <= 2 ){
-          System.out.println("Provide prefix (min 3 characters) for search i.e. con\n");
-          System.exit(0);
+        while(true){
+          SearchRequest test = new MessageJNI().readPrefixRequestMsg();
+          String prefix = test.prefix;
+          if (prefix.length() <= 2 ){
+            System.out.println("Provide prefix (min 3 characters) for search i.e. con\n");
+            System.exit(0);
+            }
+          if (prefix = "   " ){
+            //Exit
+            workerQueues[i].put("exit");
+            for (Worker worker : workers) {
+                worker.join();
+            }
+            System.exit(0);
           }
-        if (prefix = "   " ){
-          //Exit
-          workerQueues[i].put("exit");
-          for (Worker worker : workers) {
-              worker.join();
-          }
-          System.exit(0);
-        }
 
 
-        try {
-          for (int i = 0; i < numPassages; i++){
-          workerQueues[i].put(prefix);
-          }
-        } catch (InterruptedException e) {};
-
-
-        int counter=0;
-        while (counter<treeCount){
           try {
-            String results = (String)resultsOutputArray.take();
-            Scanner resultScanner = new Scanner(results);
-                resultScanner.useDelimiter(":");
-            String longestWord = resultScanner.next();
-            int threadID = resultScanner.nextInt();
-            //System.out.println("results:"+results);
-            if (longestWord == "   ")
-              new MessageJNI().writeLongestWordResponseMsg(0, prefix, threadID, "/home/ecjackson5/Spring_cs300_project/"+fileList.get(threadID), longestWord, 5, 0);
-            else
-              new MessageJNI().writeLongestWordResponseMsg(0, prefix, threadID, "/home/ecjackson5/Spring_cs300_project/"+fileList.get(threadID), longestWord, 5, 1);
-            counter++;
+            for (int i = 0; i < numPassages; i++){
+            workerQueues[i].put(prefix);
+            }
           } catch (InterruptedException e) {};
+
+
+          int counter=0;
+          while (counter<treeCount){
+            try {
+              String results = (String)resultsOutputArray.take();
+              Scanner resultScanner = new Scanner(results);
+                  resultScanner.useDelimiter(":");
+              String longestWord = resultScanner.next();
+              int threadID = resultScanner.nextInt();
+              //System.out.println("results:"+results);
+              if (longestWord == "   ")
+                new MessageJNI().writeLongestWordResponseMsg(0, prefix, threadID, "/home/ecjackson5/Spring_cs300_project/"+fileList.get(threadID), longestWord, 5, 0);
+              else
+                new MessageJNI().writeLongestWordResponseMsg(0, prefix, threadID, "/home/ecjackson5/Spring_cs300_project/"+fileList.get(threadID), longestWord, 5, 1);
+              counter++;
+            } catch (InterruptedException e) {};
+          }
         }
       }
-
       catch (IOException e) {
         System.out.println("Error: File not found\n");
         return;
       }
     }
   }
-}
