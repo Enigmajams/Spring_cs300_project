@@ -23,6 +23,9 @@ class Worker extends Thread{
     //while (true){
       try {
         String prefix=(String)this.prefixRequestArray.take();
+        if(prefix == "exit"){
+          return;
+        }
         boolean found = this.textTrieTree.contains(prefix);
         
         if (!found){
