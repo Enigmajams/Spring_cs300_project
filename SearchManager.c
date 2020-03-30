@@ -86,10 +86,10 @@ int main(int argc, char**argv) //msgsnd
         } while ((ret < 0 ) && (errno == 4));
 
         if (rbuf.present == 1){
-            fprintf(stderr,"%ld, %d of %d, %s\n", rbuf.mtype, rbuf.index,rbuf.count,rbuf.longest_word);
+            fprintf(stderr,"%ld, %d of %d, %s\n", rbuf.passageName, rbuf.index,rbuf.count,rbuf.longest_word);
         }
         else{
-            fprintf(stderr,"%ld, %d of %d, not found\n", rbuf.mtype, rbuf.index,rbuf.count);
+            fprintf(stderr,"%ld, %d of %d, not found\n", rbuf.passageName, rbuf.index,rbuf.count);
         }
       }
 
