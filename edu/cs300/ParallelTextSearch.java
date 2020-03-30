@@ -89,11 +89,11 @@ public class ParallelTextSearch{
               //System.out.println("results:"+results);
               if (longestWord.equals("___")){
                 new MessageJNI().writeLongestWordResponseMsg(0, prefix, threadID, fileList.get(threadID), longestWord, treeCount, 0);
-                System.out.println("Longest Word doesnt exist and here it is = \""+ longestWord +"\"");
+                //System.out.println("Longest Word doesnt exist and here it is = \""+ longestWord +"\"");
               }
               else{
                 new MessageJNI().writeLongestWordResponseMsg(0, prefix, threadID, fileList.get(threadID), longestWord, treeCount, 1);
-                System.out.println("Longest Word exists and here it is = \""+ longestWord +"\"");
+               //System.out.println("Longest Word exists and here it is = \""+ longestWord +"\"");
               }
               counter++;
             } catch (InterruptedException e) {};
