@@ -35,7 +35,7 @@ int main(int argc, char**argv) //msgsnd
     size_t buf_length;
     response_buf rbuf;
     int delay;
-    
+
     int prefixIndexes[argc];//This will store the index in argv[] of each
     int validPrefixes = 0;
     if (argc < 3 ) {//Error out because no prefix
@@ -69,49 +69,26 @@ int main(int argc, char**argv) //msgsnd
         perror("(msgget)");
         fprintf(stderr, "Error msgget: %s\n", strerror( errnum ));
     }
-    else{//success message
+    else{//successful connection, success message
         fprintf(stderr, "msgget: msgget succeeded: msgqid = %d\n", msqid);
     }
 
-
-
     for (int j = 0; j < validPrefixes; j++){//this loop runs for each valid prefix
-      sbuf.mtype = 1; //this is a tpye one message
-      strlcpy(sbuf.prefix,argv[prefixIndexes[j]],WORD_LENGTH); //put the first valid prefix in the struct
-      sbuf.id= (j+1); //id is the number of the message, starting at 1 because zero is for exit message
-      buf_length = strlen(sbuf.prefix) + sizeof(int)+1;//struct size without long int type
 
-      if((msgsnd(msqid, &sbuf, buf_length, IPC_NOWAIT)) < 0) {//sending message and error if <0
-          int errnum = errno;
-          fprintf(stderr,"%d, %ld, %s, %d\n", msqid, sbuf.mtype, sbuf.prefix, (int)buf_length);
-          perror("(msgsnd)");
-          fprintf(stderr, "Error sending msg: %s\n", strerror( errnum ));
-          exit(1);
-      }
-      else{//SUCCESS, PRINT SUCCESS
-          fprintf(stdout,"Message(%d): \"%s\" Sent (%d bytes)\n\n", sbuf.id, sbuf.prefix,(int)buf_length);
-      }
+      sendMessage(1, j+1, argv[prefixIndexes[j]]);//send a message
+      rbuf = getResponse(); //get a response
 
+      response_buf responses[rbuf.count]; //creates array of size(number of passages)
+      int passageCount = rbuf.count; //takes down thenumber of passages for the loop
+      responses[rbuf.index] = rbuf; //adds the message to its slot in the order in rbuf
 
-      int passageCount = 1;//this variable gets updated as soon as we receive one message back
-/*Hd*/response_buf responses[10];
-      for(int i = 0; i < passageCount; i++){//wait for all responses back for this prefix
-        int ret;
-        do {
-          ret = msgrcv(msqid, &rbuf, sizeof(response_buf), 2, 0);//receive type 2 message
-          int errnum = errno;
-          if (ret < 0 && errno !=EINTR){//Error that is not "no message"
-            fprintf(stderr, "Value of errno: %d\n", errno);
-            perror("Error printed by perror");
-            fprintf(stderr, "Error receiving msg: %s\n", strerror( errnum ));
-          }
-        } while ((ret < 0 ) && (errno == 4)); //does the above loop while there is no message found
-
+      for(int i = 1; i < passageCount; i++){//loop for all responses back for this prefix
+        rbuf = getResponse();//grabs the response
         responses[rbuf.index] = rbuf;//adds the message to its slot in the order in rbuf
-        passageCount = rbuf.count;//updates passageCount to the number of messages that PP is sending
       }
+
       fprintf(stdout,"Report \"%s\"\n", argv[prefixIndexes[j]]); // Report "prefix"
-      for (int i = 0; i < passageCount; i++){ //runs for each passage
+      for (int i = 0; i < passageCount; i++){ //runs for each passage and prints "Passage %d - %s - %s\n" if found, "Passage %d - %s - no word found\n" if not
         if (responses[i].present == 1){//checks if each message struct has a longest Word and displays it if it does
             fprintf(stdout,"Passage %d - %s - %s\n", responses[i].index, responses[i].location_description, responses[i].longest_word);
         }
@@ -121,26 +98,48 @@ int main(int argc, char**argv) //msgsnd
       }
       fprintf(stdout,"\n Delaying by %d\n", delay);//spacing out each report at the end
       if(delay > 0){sleep(delay);}//if we have a delay, wait before sending the next prefix
-      }
+    }
 
-      {//send empty message to tell PP to quit
-        sbuf.mtype = 1;
-        strlcpy(sbuf.prefix,"   ",sizeof("   "));
-        sbuf.id=0;
-        buf_length = strlen(sbuf.prefix) + sizeof(int)+1;
+    sendMessage(1, 0, "   ");//send empty message to tell PP to quit
+    fprintf(stdout,"Exiting ... \n");//Finished up, let the user know
+    exit(0);//exit
+}
 
-          if((msgsnd(msqid, &sbuf, buf_length, IPC_NOWAIT)) < 0) {//SEND MESSAGE AND CHECK FOR ERROR
-            int errnum = errno;
-            fprintf(stderr,"%d, %ld, %s, %d\n", msqid, sbuf.mtype, sbuf.prefix, (int)buf_length);
-            perror("(msgsnd)");
-            fprintf(stderr, "Error sending msg: %s\n", strerror( errnum ));
-            exit(1);
-        }
-        else{//successful message sent, print success message
-            fprintf(stdout,"Message(%d): \"%s\" Sent (%d bytes)\n\n", sbuf.id, sbuf.prefix,(int)buf_length);
-        }
-      }
-  fprintf(stdout,"Exiting ... \n");//Finished up, let the user know
+response_buf getResponse() {
+  int ret;
+  response_buf rbuf;
 
-  exit(0);//exit
+  do {
+    ret = msgrcv(msqid, &rbuf, sizeof(response_buf), 2, 0);//receive type 2 message
+    int errnum = errno;
+    if (ret < 0 && errno !=EINTR){//Error that is not "no message"
+      fprintf(stderr, "Value of errno: %d\n", errno);
+      perror("Error printed by perror");
+      fprintf(stderr, "Error receiving msg: %s\n", strerror( errnum ));
+    }
+  } while ((ret < 0 ) && (errno == 4)); //does the above loop while there is no message found
+
+  return rbuf;
+}
+
+void sendMessage(int type, int id, string prefix){
+  prefix_buf sbuf;
+  size_t buf_length;
+
+  sbuf.mtype = type; //this is a type one message
+  strlcpy(sbuf.prefix,prefix,WORD_LENGTH); //put the first valid prefix in the struct
+  sbuf.id= (id); //id is the number of the message, starting at 1 because zero is for exit message
+  buf_length = strlen(sbuf.prefix) + sizeof(int)+1;//struct size without long int type
+
+  if((msgsnd(msqid, &sbuf, buf_length, IPC_NOWAIT)) < 0) {//sending message and error if <0
+      int errnum = errno;
+      fprintf(stderr,"%d, %ld, %s, %d\n", msqid, sbuf.mtype, sbuf.prefix, (int)buf_length);
+      perror("(msgsnd)");
+      fprintf(stderr, "Error sending msg: %s\n", strerror( errnum ));
+      exit(1);
+  }
+  else{//SUCCESS, PRINT SUCCESS
+      fprintf(stdout,"Message(%d): \"%s\" Sent (%d bytes)\n\n", sbuf.id, sbuf.prefix,(int)buf_length);
+  }
+
 }
