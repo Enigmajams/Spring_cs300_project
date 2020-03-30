@@ -78,7 +78,7 @@ int main(int argc, char**argv) //msgsnd
     for (int j = 0; j < validPrefixes; j++){//this loop runs for each valid prefix
       sbuf.mtype = 1; //this is a tpye one message
       strlcpy(sbuf.prefix,argv[prefixIndexes[j]],WORD_LENGTH); //put the first valid prefix in the struct
-      sbuf.id=0; //id is zero cause its an actual message
+      sbuf.id= (j+1); //id is the number of the message, starting at 1 because zero is for exit message
       buf_length = strlen(sbuf.prefix) + sizeof(int)+1;//struct size without long int type
 
       if((msgsnd(msqid, &sbuf, buf_length, IPC_NOWAIT)) < 0) {//sending message and error if <0
@@ -126,7 +126,7 @@ int main(int argc, char**argv) //msgsnd
       {//send empty message to tell PP to quit
         sbuf.mtype = 1;
         strlcpy(sbuf.prefix,"   ",sizeof("   "));
-        sbuf.id=1;
+        sbuf.id=0;
         buf_length = strlen(sbuf.prefix) + sizeof(int)+1;
 
           if((msgsnd(msqid, &sbuf, buf_length, IPC_NOWAIT)) < 0) {//SEND MESSAGE AND CHECK FOR ERROR
