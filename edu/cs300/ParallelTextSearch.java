@@ -88,7 +88,7 @@ public class ParallelTextSearch{
         Scanner resultScanner = new Scanner(results); 
             resultScanner.useDelimiter(":");
         String longestWord = resultScanner.next();
-        int threadID = resultScanner.next(); 
+        int threadID = resultScanner.nextInt(); 
         //System.out.println("results:"+results);
         if (longestWord == "   ")
           new MessageJNI().writeLongestWordResponseMsg(0, prefix, threadID, "/home/ecjackson5/Spring_cs300_project/"+fileList.get(threadID), longestWord, 5, 0);          
