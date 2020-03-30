@@ -29,10 +29,10 @@ class Worker extends Thread{
         boolean found = this.textTrieTree.contains(prefix);
         
         if (!found){          
-          System.out.println("Worker-"+this.id+" "+req.requestID+":"+ prefix+" ==> not found ");
+          System.out.println("Worker-"+this.id+" "+"</here be the prefix number>"+":"+ prefix+" ==> not found ");
           resultsOutputArray.put("___:"+id);
         } else{
-          System.out.println("Worker-"+this.id+" "+req.requestID+":"+ prefix+" ==> "+word);
+          System.out.println("Worker-"+this.id+" "+"/here be the prefix number>"+:"+ prefix+" ==> "+this.textTrieTree.getLongest(prefix));
           resultsOutputArray.put(this.textTrieTree.getLongest(prefix) + ":" + id);
         }
       } catch(InterruptedException e){
