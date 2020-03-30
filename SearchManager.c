@@ -72,8 +72,8 @@ int main(int argc, char**argv) //msgsnd
       }
 
 
-
-      for(int i = 0; i < 6; i++){//WAIT FOR RESPONSES
+      int passageCount = 1;
+      for(int i = 0; i < passageCount; i++){//WAIT FOR RESPONSES
         int ret;
         do {
           ret = msgrcv(msqid, &rbuf, sizeof(response_buf), 2, 0);//receive type 2 message
@@ -84,13 +84,15 @@ int main(int argc, char**argv) //msgsnd
             fprintf(stderr, "Error receiving msg: %s\n", strerror( errnum ));
           }
         } while ((ret < 0 ) && (errno == 4));
-
+        
         if (rbuf.present == 1){
             fprintf(stderr,"%s, %d of %d, %s\n", rbuf.location_description, rbuf.index,rbuf.count,rbuf.longest_word);
         }
         else{
             fprintf(stderr,"%s, %d of %d, not found\n", rbuf.location_description, rbuf.index,rbuf.count);
         }
+        passageCount = rbuf.count;
+        fprintf(stderr,"%d", rbuf.present);
       }
 
 
