@@ -85,11 +85,15 @@ public class ParallelTextSearch{
     while (counter<treeCount){
       try {
         String results = (String)resultsOutputArray.take();
-        System.out.println("results:"+results);
-        if (results == "   ")
-          new MessageJNI().writeLongestWordResponseMsg(0, prefix, counter, "/home/ecjackson5/Spring_cs300_project/"+fileList.get(counter), results, 5, 0);          
+        Scanner resultScanner = new Scanner(results); 
+            sc.useDelimiter(":");
+        String longestWord = resultScanner.next();
+        int threadID = resultScanner.next(); 
+        //System.out.println("results:"+results);
+        if (longestWord == "   ")
+          new MessageJNI().writeLongestWordResponseMsg(0, prefix, threadID, "/home/ecjackson5/Spring_cs300_project/"+fileList.get(threadID), longestWord, 5, 0);          
         else 
-          new MessageJNI().writeLongestWordResponseMsg(0, prefix, counter, "/home/ecjackson5/Spring_cs300_project/"+fileList.get(counter), results, 5, 1);          
+          new MessageJNI().writeLongestWordResponseMsg(0, prefix, threadID, "/home/ecjackson5/Spring_cs300_project/"+fileList.get(threadID), longestWord, 5, 1);          
         counter++;
       } catch (InterruptedException e) {};
     }
