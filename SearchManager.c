@@ -25,6 +25,7 @@ strlcpy(char       *dst,      /* O - Destination string */
     dst[srclen] = '\0';
     return (srclen);
 }
+
 int getMSQID() {
   int msqid;
   key_t key = ftok(CRIMSON_ID,QUEUE_NUMBER); //grab queue key
@@ -40,10 +41,9 @@ int getMSQID() {
   }
   return msqid;
 }
-response_buf getResponse() {
+response_buf getResponse(int msqid) {
   int ret;
   response_buf rbuf;
-  int msqid = getMSQID();
   do {
     ret = msgrcv(msqid, &rbuf, sizeof(response_buf), 2, 0);//receive type 2 message
     int errnum = errno;
@@ -56,10 +56,9 @@ response_buf getResponse() {
 
   return rbuf;
 }
-void sendMessage(int type, int id, char* prefix){
+void sendMessage(int type, int id,int msqid, char* prefix){
   prefix_buf sbuf;
   size_t buf_length;
-  int msqid = getMSQID();
 
   sbuf.mtype = type; //this is a type one message
   strlcpy(sbuf.prefix,prefix,WORD_LENGTH); //put the first valid prefix in the struct
@@ -83,13 +82,6 @@ void sendMessage(int type, int id, char* prefix){
 
 int main(int argc, char**argv) //msgsnd
 {
-    int msqid;
-    int msgflg = IPC_CREAT | 0666;
-    key_t key;
-    prefix_buf sbuf;
-    size_t buf_length;
-    response_buf rbuf;
-    int delay;
 
     int prefixIndexes[argc];//This will store the index in argv[] of each
     int validPrefixes = 0;
@@ -116,21 +108,22 @@ int main(int argc, char**argv) //msgsnd
     }
     delay = atoi(argv[1]);
 
+    int msqid = getMSQID();
+    int delay;
 
-    key = ftok(CRIMSON_ID,QUEUE_NUMBER); //grab queue key
 
 
     for (int j = 0; j < validPrefixes; j++){//this loop runs for each valid prefix
 
-      sendMessage(1, j+1, argv[prefixIndexes[j]]);//send a message
-      rbuf = getResponse(); //get a response
+      sendMessage(1, j+1, msqid, argv[prefixIndexes[j]]);//send a message
+      rbuf = getResponse(msqid); //get a response
 
       response_buf responses[rbuf.count]; //creates array of size(number of passages)
       int passageCount = rbuf.count; //takes down thenumber of passages for the loop
       responses[rbuf.index] = rbuf; //adds the message to its slot in the order in rbuf
 
       for(int i = 1; i < passageCount; i++){//loop for all responses back for this prefix
-        rbuf = getResponse();//grabs the response
+        rbuf = getResponse(msqid);//grabs the response
         responses[rbuf.index] = rbuf;//adds the message to its slot in the order in rbuf
       }
 
@@ -147,7 +140,7 @@ int main(int argc, char**argv) //msgsnd
       if(delay > 0){sleep(delay);}//if we have a delay, wait before sending the next prefix
     }
 
-    sendMessage(1, 0, "   ");//send empty message to tell PP to quit
+    sendMessage(1, 0, msqid, "   ");//send empty message to tell PP to quit
     fprintf(stdout,"Exiting ... \n");//Finished up, let the user know
     exit(0);//exit
 }
