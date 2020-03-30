@@ -62,10 +62,11 @@ public class ParallelTextSearch{
               for (int i = 0; i < numPassages; i++){
                 workerQueues[i].put("exit");
               }
-            } catch (InterruptedException e) {};            
+                       
             for (Worker worker : workers) {              
                 worker.join();
             }
+            } catch (InterruptedException e) {}; 
             System.exit(0);
           }
 
