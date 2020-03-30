@@ -86,7 +86,7 @@ public class ParallelTextSearch{
       try {
         String results = (String)resultsOutputArray.take();
         Scanner resultScanner = new Scanner(results); 
-            sc.useDelimiter(":");
+            resultScanner.useDelimiter(":");
         String longestWord = resultScanner.next();
         int threadID = resultScanner.next(); 
         //System.out.println("results:"+results);
