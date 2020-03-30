@@ -15,13 +15,20 @@ public class ParallelTextSearch{
             fileList.add(passageNameReader.next());
         }
         //at this point filelist should contain all the file names
-        int numPassages = fileList.size();
+        int numPassages = fileList.size(); //numpassages will contain the total number of file names
+        int numValidPassages = numPassages; //numValidPassages will contain the number of passages that we can open
 
-
-        ArrayList<String[]> passageArrays = new ArrayList<String[]>();
-        for(int i=0;i<numPassages;i++){ //loop for
+        ArrayList<String[]> passageArrays = new ArrayList<String[]>();//declares an arraylist of string arrays to store the string arrays take from each file
+        for(int i=0;i<numPassages;i++){ //loop for each file name
+            try{
             File text = new File("/home/ecjackson5/Spring_cs300_project/"+fileList.get(i)); //for each file name, open it
             Scanner sc = new Scanner(text); //make a scanner on that file
+            }catch(IOException e){
+              System.err.println("Error, File unable to be opened. Ignoring ... \n");
+              numValidPassages--; // reduce the number of passages we can read in from
+              fileList.remove(i); //remove the file name
+              continue; //skip the rest of the for loop
+            }
             sc.useDelimiter("\\W|(?=\\S*['-])([a-zA-Z'-]+)|(\\b\\w{1,2}\\b)"); //delimiter is, anything not a word, any word with ' or - in it, and any word less than 3 characters
             ArrayList<String> passageArrayList = new ArrayList<String>(); //make an arraylist for each string you read in
             while(sc.hasNext()){ //loop until there are no more valid tokens
@@ -33,7 +40,7 @@ public class ParallelTextSearch{
             passageArrays.add(passageBasicArray);
         }
         //Theoretically the passageArrays arraylist now contains all the file name strings
-        int treeCount = numPassages; //sets the number of workers to make
+        int treeCount = numValidPassages; //sets the number of workers to make
         ArrayBlockingQueue[] workerQueues = new ArrayBlockingQueue[treeCount]; //makes an array of queues for each worker
         ArrayBlockingQueue resultsOutputArray = new ArrayBlockingQueue(treeCount*10); // makes a queue for returning values
 
@@ -71,7 +78,7 @@ public class ParallelTextSearch{
           }
           } catch (InterruptedException e) {};
 
-          for(int counter=0;counter<treeCount;counter++){ //this loop runs until we get all the messages from all the workers on the current prefix
+          for(int counter=0;counter<treeCount;counter++){ //this loop runs until we get all the messages from all the workers on the current prefix and sends each message as we get it
             try {
               String results = (String)resultsOutputArray.take(); //pull a result off the queue
               Scanner resultScanner = new Scanner(results); //we use a scanner to interpret the results
