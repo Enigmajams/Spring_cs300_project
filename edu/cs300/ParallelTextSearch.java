@@ -56,7 +56,7 @@ public class ParallelTextSearch{
             System.out.println("Provide prefix (min 3 characters) for search i.e. con\n");
             System.exit(0);
             }
-          if (prefix == "   " ){
+          if (prefix.equals("   ")){
             //Exit
             try {
               for (int i = 0; i < numPassages; i++){
