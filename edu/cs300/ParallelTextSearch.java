@@ -44,7 +44,7 @@ public class ParallelTextSearch{
         }
         ArrayList<Worker> workers = new ArrayList<Worker>();
         for (int i = 0; i < numPassages; i++){
-          workers.add(new Worker(passageArrays.get(i),i,workers[i],resultsOutputArray).start());
+          workers.add(new Worker(passageArrays.get(i),i,workerQueues[i],resultsOutputArray).start());
         }
 
 
@@ -55,10 +55,14 @@ public class ParallelTextSearch{
             System.out.println("Provide prefix (min 3 characters) for search i.e. con\n");
             System.exit(0);
             }
-          if (prefix = "   " ){
+          if (prefix == "   " ){
             //Exit
-            workerQueues[i].put("exit");
-            for (Worker worker : workers) {
+            try {
+              for (int i = 0; i < numPassages; i++){
+                workerQueues[i].put("exit");
+              }
+            } catch (InterruptedException e) {};            
+            for (Worker worker : workers) {              
                 worker.join();
             }
             System.exit(0);
