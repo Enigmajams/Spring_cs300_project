@@ -42,13 +42,13 @@ public class ParallelTextSearch{
         for (int i=0;i<treeCount;i++) {
           workers[i] = new ArrayBlockingQueue(10);
         }
-        ArrayList<Worker> workers = new ArrayList<Worker>()
+        ArrayList<Worker> workers = new ArrayList<Worker>();
         for (int i = 0; i < numPassages; i++){
           workers.add(new Worker(passageArrays.get(i),i,workers[i],resultsOutputArray).start());
         }
 
 
-while(;;){
+while(true){
         SearchRequest test = new MessageJNI().readPrefixRequestMsg();
         String prefix = test.prefix;
         if (prefix.length() <= 2 ){
