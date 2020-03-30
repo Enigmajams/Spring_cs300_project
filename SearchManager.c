@@ -100,12 +100,13 @@ int main(int argc, char**argv) //msgsnd
             fprintf(stdout,"Passage %d - %s - no word found\n", responses[i].index, responses[i].location_description);
         }
       }
+      fprintf(stdout,"\n");
       }
   //SEND EXIT
-  /*
+        
       sbuf.mtype = 1;
-      strlcpy(sbuf.prefix,argv[j],WORD_LENGTH);
-      sbuf.id=0;
+      strlcpy(sbuf.prefix,"   ");
+      sbuf.id=1;
       buf_length = strlen(sbuf.prefix) + sizeof(int)+1;
       
         if((msgsnd(msqid, &sbuf, buf_length, IPC_NOWAIT)) < 0) {//SEND MESSAGE AND CHECK FOR ERROR
@@ -118,6 +119,6 @@ int main(int argc, char**argv) //msgsnd
       else{//SUCESS, PRINT SUCESS
           fprintf(stdout,"Message(%d): \"%s\" Sent (%d bytes)\n\n", sbuf.id, sbuf.prefix,(int)buf_length);
       }
-  */
+  fprintf(stdout," Exiting ... \n");
   exit(0);
 }
