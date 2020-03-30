@@ -44,7 +44,8 @@ public class ParallelTextSearch{
         }
         ArrayList<Worker> workers = new ArrayList<Worker>();
         for (int i = 0; i < numPassages; i++){
-          workers.add(new Worker(passageArrays.get(i),i,workerQueues[i],resultsOutputArray).start());
+          workers.add(new Worker(passageArrays.get(i),i,workerQueues[i],resultsOutputArray));
+          workers.get(i).start();
         }
 
 
