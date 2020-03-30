@@ -38,7 +38,7 @@ int main(int argc, char**argv) //msgsnd
     int delay = atoi(argv[1]);
     int prefixIndexes[argc];//This will store the index in argv[] of each
     int validPrefixes = 0;
-    if (argc <= 3 ) {//Error out because no prefix
+    if (argc < 3 ) {//Error out because no prefix
         fprintf(stderr,"Error: please provide at least one prefix of at least two characters, and a time\n");
         fprintf(stderr,"Usage: %s <time> <prefix>\n",argv[0]);
         exit(-1);
