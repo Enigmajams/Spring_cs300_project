@@ -73,6 +73,7 @@ int main(int argc, char**argv) //msgsnd
 
 
       int passageCount = 1;
+      response_buf responses[10];
       for(int i = 0; i < passageCount; i++){//WAIT FOR RESPONSES
         int ret;
         do {
@@ -85,17 +86,17 @@ int main(int argc, char**argv) //msgsnd
           }
         } while ((ret < 0 ) && (errno == 4));
         
-        if (rbuf.present == 1){
-            fprintf(stderr,"%s, %d of %d, %s\n", rbuf.location_description, rbuf.index,rbuf.count,rbuf.longest_word);
+        responses[rbuf.index] = rbuf;
+        passageCount = rbuf.count;
+      }
+      for (int i = 0; i < passageCount; i++){      
+        if (responses[i].present == 1){
+            fprintf(stderr,"%s, %d of %d, %s\n", responses[i].location_description, responses[i].index,responses[i].count,responses[i].longest_word);
         }
         else{
-            fprintf(stderr,"%s, %d of %d, not found\n", rbuf.location_description, rbuf.index,rbuf.count);
+            fprintf(stderr,"%s, %d of %d, not found\n", responses[i].location_description, responses[i].index,responses[i].count);
         }
-        passageCount = rbuf.count;
-        fprintf(stderr,"%d", rbuf.present);
       }
-
-
       }
   //SEND EXIT
   exit(0);
