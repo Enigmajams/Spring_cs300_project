@@ -177,7 +177,7 @@ void sigIntHandler(int sig_num){
   sem_getvalue(&globalCurrentPassage, &sigintCurrentPassageCount);
 
   for(int i = 0; i < globalPrefixCount;i++){
-      fprintf(stdout,"%s - %d and %d\n" ,globalPrefixArray[i],i,globalPassageCount);
+      fprintf(stdout,"%s - %d and %d and prefix %d in passage %d\n" ,globalPrefixArray[i],i,globalPassageCount,sigintCurrentPrefix, sigintCurrentPassage);
      /* 
     if(i  > sigintCurrentPrefixCount){
       fprintf(stdout,"%s - pending\n" ,globalPrefixArray[i]);
