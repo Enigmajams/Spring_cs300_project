@@ -165,17 +165,17 @@ size_t /* O - Length of string */ strlcpy(char*dst /* O - Destination string */,
   return (srclen);
 }
 void sigIntHandler(int sig_num){
-  int sigintCurrentPrefixCount;
-  int sigintCurrentPassageCount;
-  sem_getvalue(globalPrefixCount, *sigintCurrentPrefixCount);
-  sem_getvalue(globalPassageCount, *sigintCurrentPassageCount);
+  int *sigintCurrentPrefixCount;
+  int *sigintCurrentPassageCount;
+  sem_getvalue(globalPrefixCount, sigintCurrentPrefixCount);
+  sem_getvalue(globalPassageCount, sigintCurrentPassageCount);
 
   for(int i = 0; i < globalPrefixCount;i++){
-    if(sigintCurrentPrefixCount < i ){
+    if(*sigintCurrentPrefixCount < i ){
       fprintf(stdout,"%s - pending\n" ,globalPrefixArray[i]);
     }
-    else if(sigintCurrentPrefixCount == i){
-      fprintf(stdout,"%s - %d out of %d\n" ,globalPrefixArray[i],sigintCurrentPassageCount,globalPassageCount);
+    else if(*sigintCurrentPrefixCount == i){
+      fprintf(stdout,"%s - %d out of %d\n" ,globalPrefixArray[i],*sigintCurrentPassageCount,globalPassageCount);
     }
     else{
       fprintf(stdout,"%s - done\n" ,globalPrefixArray[i]);
