@@ -154,7 +154,7 @@ void sendMessage(int type, int id,int msqid, char* prefix){
   }
 
 }
-size_t /* O - Length of string */ strlcpy(char*dst /* O - Destination string */, const char *src /* I - Source string */, size_t size /* I - Size of destination string buffer */);{
+size_t /* O - Length of string */ strlcpy(char*dst /* O - Destination string */, const char *src /* I - Source string */, size_t size /* I - Size of destination string buffer */){
   size_t  srclen;         // Length of source string
   size --;
   srclen = strlen(src);
@@ -167,8 +167,8 @@ size_t /* O - Length of string */ strlcpy(char*dst /* O - Destination string */,
 void sigIntHandler(int sig_num){
   int sigintCurrentPrefixCount;
   int sigintCurrentPassageCount;
-  sem_getvalue(globalPrefixCount, &sigintCurrentPrefixCount);
-  sem_getvalue(globalPassageCount, &sigintCurrentPassageCount);
+  sem_getvalue(globalPrefixCount, *sigintCurrentPrefixCount);
+  sem_getvalue(globalPassageCount, *sigintCurrentPassageCount);
 
   for(int i = 0; i < globalPrefixCount;i++){
     if(sigintCurrentPrefixCount < i ){
