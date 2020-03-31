@@ -6,32 +6,24 @@
 #include <stdlib.h>
 #include <errno.h>
 #include <unistd.h>
+#include <semaphore.h>
 #include "longest_word_search.h"
 #include "queue_ids.h"
 
-size_t                        /* O - Length of string */
-strlcpy(char       *dst,      /* O - Destination string */
-        const char *src,      /* I - Source string */
-        size_t      size){     /* I - Size of destination string buffer */
-
-    size_t    srclen;         /* Length of source string */
-    //Figure out how much room is needed...
-    size --;
-    srclen = strlen(src);
-    // Copy the appropriate amount...
-    if (srclen > size)
-        srclen = size;
-    memcpy(dst, src, srclen);
-    dst[srclen] = '\0';
-    return (srclen);
-}
-
+size_t strlcpy(char*dst, const char *src, size_t size);
 int getMSQID();
 response_buf getResponse(int msqid);
 void sendMessage(int type, int id,int msqid, char* prefix);
+void sigIntHandler(int sig_num);
 
-int main(int argc, char**argv) //msgsnd
-{
+char** globalPrefixArray;
+int  globalPassageCount = 0;
+int globalPrefixCount = 0;
+sem_t globalCurrentPrefix;
+sem_t globalCurrentPassage;
+
+
+int main(int argc, char**argv){
     int prefixIndexes[argc];//This will store the index in argv[] of each valid prefiix
     int validPrefixes = 0;
     if (argc < 3 ) {//Error out because no prefix
@@ -56,18 +48,40 @@ int main(int argc, char**argv) //msgsnd
       exit(-1);
     }
 
+//We have valid input
     int msqid = getMSQID();
     int delay= atoi(argv[1]);
     response_buf rbuf;
 
+    char* localPrefixArray[validPrefixes]; //declares a local array to assign global pointer to
+    for (int i = 0; i < validPrefixes; i++){ //for each valid prefix, add it to the array
+      strlcpy(localPrefixArray[i],argv[prefixIndexes[j]],WORD_LENGTH); //copy it in
+    }
+    globalPrefixArray = localPrefixArray; //assign the global array to the local one
+    globalPrefixCount = validPrefixes; //assgins the number of prefixes to the global value
+    sem_init(&globalCurrentPrefix, 0, 0); //intialize current prefix to 0
+    sem_init(&globalCurrentPassage, 0, 0); //initialize passage count to zero
+    signal(SIGINT, sigIntHandler); //enable sigIntHandler
+
+
     for (int j = 0; j < validPrefixes; j++){//this loop runs for each valid prefix
-      sendMessage(1, j+1, msqid, argv[prefixIndexes[j]]);//send a message of each prefix
+      sendMessage(1, j+1, msqid, argv[prefixIndexes[j]]);//send a message of this prefix
+      sem_post(&globalCurrentPrefix);//increment atomically the number of the prefix we're on
+      if (j!=0) {sem_init(&globalCurrentPassage, 0, 0);} //set passage count to zero on all but the first loop
+
       rbuf = getResponse(msqid); //get a response
+
       response_buf responses[rbuf.count]; //creates array of size(number of passages)
       int passageCount = rbuf.count; //takes down thenumber of passages for the loop
       responses[rbuf.index] = rbuf; //adds the message to its slot in the order in rbuf
+
+      if (j == 0) {globalPassageCount = passageCount;} //put the passage count in the global variable
+      sem_post(&globalCurrentPrefix); //increment atomically the number of the passage we're on
+
+
       for(int i = 1; i < passageCount; i++){//loop for all responses back for this prefix
         rbuf = getResponse(msqid);//grabs the response
+          sem_post(&globalCurrentPassage); //increment atomically the number of the passage we're on
         responses[rbuf.index] = rbuf;//adds the message to its slot in the order in rbuf
       }
       fprintf(stdout,"Report \"%s\"\n", argv[prefixIndexes[j]]); // Report "prefix"
@@ -138,4 +152,33 @@ void sendMessage(int type, int id,int msqid, char* prefix){
       fprintf(stdout,"Message(%d): \"%s\" Sent (%d bytes)\n\n", sbuf.id, sbuf.prefix,(int)buf_length);
   }
 
+}
+size_t /* O - Length of string */ strlcpy(char*dst /* O - Destination string */, const char *src /* I - Source string */, size_t size /* I - Size of destination string buffer */);{
+  size_t  srclen;         // Length of source string
+  size --;
+  srclen = strlen(src);
+  if (srclen > size)
+      srclen = size;
+  memcpy(dst, src, srclen);
+  dst[srclen] = '\0';
+  return (srclen);
+}
+void sigIntHandler(int sig_num){
+  int sigintCurrentPrefixCount;
+  int sigintCurrentPassageCount;
+  sem_getvalue(globalPrefixCount, &sigintCurrentPrefixCount);
+  sem_getvalue(globalPassageCount, &sigintCurrentPassageCount);
+
+  for(int i = 0; i < globalPrefixCount;i++){
+    if(sigintCurrentPrefixCount < i ){
+      fprintf(stdout,"%s - pending\n" ,globalPrefixArray[i]);
+    }
+    else if(sigintCurrentPrefixCount == i){
+      fprintf(stdout,"%s - %d out of %d\n" ,globalPrefixArray[i],sigintPassageCount,globalPassageCount);
+    }
+    else{
+      fprintf(stdout,"%s - done\n" ,globalPrefixArray[i]);
+    }
+  }
+  return;
 }
