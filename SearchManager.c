@@ -7,6 +7,7 @@
 #include <errno.h>
 #include <unistd.h>
 #include <semaphore.h>
+#include <signal.h>
 #include "longest_word_search.h"
 #include "queue_ids.h"
 
@@ -55,7 +56,7 @@ int main(int argc, char**argv){
 
     char* localPrefixArray[validPrefixes]; //declares a local array to assign global pointer to
     for (int i = 0; i < validPrefixes; i++){ //for each valid prefix, add it to the array
-      strlcpy(localPrefixArray[i],argv[prefixIndexes[j]],WORD_LENGTH); //copy it in
+      strlcpy(localPrefixArray[i],argv[prefixIndexes[i]],WORD_LENGTH); //copy it in
     }
     globalPrefixArray = localPrefixArray; //assign the global array to the local one
     globalPrefixCount = validPrefixes; //assgins the number of prefixes to the global value
@@ -174,7 +175,7 @@ void sigIntHandler(int sig_num){
       fprintf(stdout,"%s - pending\n" ,globalPrefixArray[i]);
     }
     else if(sigintCurrentPrefixCount == i){
-      fprintf(stdout,"%s - %d out of %d\n" ,globalPrefixArray[i],sigintPassageCount,globalPassageCount);
+      fprintf(stdout,"%s - %d out of %d\n" ,globalPrefixArray[i],sigintCurrentPassageCount,globalPassageCount);
     }
     else{
       fprintf(stdout,"%s - done\n" ,globalPrefixArray[i]);
