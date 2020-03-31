@@ -58,14 +58,16 @@ int main(int argc, char**argv){
     for (int i = 0; i < validPrefixes; i++){ //for each valid prefix, add it to the array
       strlcpy(localPrefixArray[i],argv[prefixIndexes[i]],WORD_LENGTH); //copy it in
     }
+    fprintf(stderr,"Prefixes copied\n");
     globalPrefixArray = localPrefixArray; //assign the global array to the local one
     globalPrefixCount = validPrefixes; //assgins the number of prefixes to the global value
     sem_init(&globalCurrentPrefix, 0, 0); //intialize current prefix to 0
     sem_init(&globalCurrentPassage, 0, 0); //initialize passage count to zero
     signal(SIGINT, sigIntHandler); //enable sigIntHandler
 
-
+    fprintf(stderr,"semaphores initialized\n");
     for (int j = 0; j < validPrefixes; j++){//this loop runs for each valid prefix
+      fprintf(stderr,"Prefix loop: %d\n", j);
       sendMessage(1, j+1, msqid, argv[prefixIndexes[j]]);//send a message of this prefix
       sem_post(&globalCurrentPrefix);//increment atomically the number of the prefix we're on
       if (j!=0) {sem_init(&globalCurrentPassage, 0, 0);} //set passage count to zero on all but the first loop
@@ -102,6 +104,7 @@ int main(int argc, char**argv){
     fprintf(stdout,"Exiting ... \n");//Finished up, let the user know
     exit(0);//exit
 }
+
 
 int getMSQID() {
   int msqid;
