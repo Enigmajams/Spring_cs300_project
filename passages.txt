@@ -1,6 +1,6 @@
-War_And_Peace
+War_And_Peace.txt
 Sense_And_Sensibility.txt
-Mansfield_Park
+Mansfield_Park.txt
 The_Call_Of_The_Wild.txt
 Tale_Of_Two_Cities.txt
 Peter_Pan
