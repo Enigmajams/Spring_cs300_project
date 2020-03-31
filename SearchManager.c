@@ -60,7 +60,7 @@ int main(int argc, char**argv){
       localPrefixArray[i] = argv[prefixIndexes[i]]; //copy it in
     }
     //fprintf(stderr,"Prefixes copied\n");
-    
+
     globalPrefixArray = localPrefixArray; //assign the global array to the local one
     globalPrefixCount = validPrefixes; //assgins the number of prefixes to the global value
     sem_init(&globalCurrentPrefix, 0, 0); //intialize current prefix to 0
@@ -70,7 +70,7 @@ int main(int argc, char**argv){
     //fprintf(stderr,"semaphores initialized\n");
     for (int j = 0; j < validPrefixes; j++){//this loop runs for each valid prefix
       //fprintf(stderr,"Prefix loop: %d\n", j);
-      sendMessage(1, j+1, msqid, argv[prefixIndexes[j]]);//send a message of this prefix      
+      sendMessage(1, j+1, msqid, argv[prefixIndexes[j]]);//send a message of this prefix
       if (j!=0) {sem_init(&globalCurrentPassage, 0, 0);} //set passage count to zero on all but the first loop
 
       rbuf = getResponse(msqid); //get a response
@@ -80,8 +80,6 @@ int main(int argc, char**argv){
       responses[rbuf.index] = rbuf; //adds the message to its slot in the order in rbuf
 
       if (j == 0) {globalPassageCount = passageCount;} //put the passage count in the global variable
-      sem_post(&globalCurrentPrefix); //increment atomically the number of the passage we're on
-
 
       for(int i = 1; i < passageCount; i++){//loop for all responses back for this prefix
         rbuf = getResponse(msqid);//grabs the response
@@ -177,17 +175,19 @@ void sigIntHandler(int sig_num){
   sem_getvalue(&globalCurrentPassage, &sigintCurrentPassageCount);
 
   for(int i = 0; i < globalPrefixCount;i++){
-      fprintf(stdout,"%s - %d and %d and prefix %d in passage %d\n" ,globalPrefixArray[i],i,globalPassageCount,sigintCurrentPrefixCount, sigintCurrentPassageCount);
-     /* 
-    if(i  > sigintCurrentPrefixCount){
+    //fprintf(stdout,"%s - %d and %d and prefix %d in passage %d\n" ,globalPrefixArray[i],i,globalPassageCount,sigintCurrentPrefixCount, sigintCurrentPassageCount);
+    if (sigintCurrentPassageCount == 0){ //if we have recieved no messages, print all as pending
       fprintf(stdout,"%s - pending\n" ,globalPrefixArray[i]);
     }
-    else if(i == sigintCurrentPrefixCount ){
+    else if(i+1 == sigintCurrentPrefixCount ){ // else if we are currently in that passage print the relevant info
       fprintf(stdout,"%s - %d out of %d\n" ,globalPrefixArray[i],sigintCurrentPassageCount,globalPassageCount);
     }
-    else{
+    else if(i+1  > sigintCurrentPrefixCount){ //if we have recieved at least one message and the count of the prefix we are on is behind where we are, print pending
+      fprintf(stdout,"%s - pending\n" ,globalPrefixArray[i]);
+    }
+    else{ //otherwise, we're done
       fprintf(stdout,"%s - done\n" ,globalPrefixArray[i]);
-    }*/
+    }
   }
   return;
 }
