@@ -56,10 +56,10 @@ int main(int argc, char**argv){
 
     char* localPrefixArray[validPrefixes]; //declares a local array to assign global pointer to
     for (int i = 0; i < validPrefixes; i++){ //for each valid prefix, add it to the array
- fprintf(stderr,"Prefixes copy loop %d -- prefix :: %s\n", i, argv[prefixIndexes[i]]);
+    //fprintf(stderr,"Prefixes copy loop %d -- prefix :: %s\n", i, argv[prefixIndexes[i]]);
       localPrefixArray[i] = argv[prefixIndexes[i]]; //copy it in
     }
-    fprintf(stderr,"Prefixes copied\n");
+    //fprintf(stderr,"Prefixes copied\n");
     
     globalPrefixArray = localPrefixArray; //assign the global array to the local one
     globalPrefixCount = validPrefixes; //assgins the number of prefixes to the global value
@@ -67,11 +67,10 @@ int main(int argc, char**argv){
     sem_init(&globalCurrentPassage, 0, 0); //initialize passage count to zero
     signal(SIGINT, sigIntHandler); //enable sigIntHandler
 
-    fprintf(stderr,"semaphores initialized\n");
+    //fprintf(stderr,"semaphores initialized\n");
     for (int j = 0; j < validPrefixes; j++){//this loop runs for each valid prefix
-      fprintf(stderr,"Prefix loop: %d\n", j);
-      sendMessage(1, j+1, msqid, argv[prefixIndexes[j]]);//send a message of this prefix
-      sem_post(&globalCurrentPrefix);//increment atomically the number of the prefix we're on
+      //fprintf(stderr,"Prefix loop: %d\n", j);
+      sendMessage(1, j+1, msqid, argv[prefixIndexes[j]]);//send a message of this prefix      
       if (j!=0) {sem_init(&globalCurrentPassage, 0, 0);} //set passage count to zero on all but the first loop
 
       rbuf = getResponse(msqid); //get a response
@@ -99,6 +98,7 @@ int main(int argc, char**argv){
         }
       }
       //fprintf(stderr,"\n Delaying by %d\n", delay);//spacing out each report at the end for clarity
+      sem_post(&globalCurrentPrefix);//increment atomically the number of the prefix we've completed
       if(delay > 0){sleep(delay);}//if we have a delay, wait before sending the next prefix
     }
 
@@ -176,10 +176,10 @@ void sigIntHandler(int sig_num){
   sem_getvalue(&globalCurrentPassage, &sigintCurrentPassageCount);
 
   for(int i = 0; i < globalPrefixCount;i++){
-    if(sigintCurrentPrefixCount < i ){
+    if(i > sigintCurrentPrefixCount){
       fprintf(stdout,"%s - pending\n" ,globalPrefixArray[i]);
     }
-    else if(sigintCurrentPrefixCount == i){
+    else if(i == sigintCurrentPrefixCount ){
       fprintf(stdout,"%s - %d out of %d\n" ,globalPrefixArray[i],sigintCurrentPassageCount,globalPassageCount);
     }
     else{
