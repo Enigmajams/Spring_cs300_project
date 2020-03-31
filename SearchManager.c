@@ -84,7 +84,7 @@ int main(int argc, char**argv){
       for(int i = 1; i < passageCount; i++){//loop for all responses back for this prefix
         rbuf = getResponse(msqid);//grabs the response
         sem_post(&globalCurrentPassage); //increment atomically the number of the passage we're on
-        sleep(1);
+        sleep(2);
         responses[rbuf.index] = rbuf;//adds the message to its slot in the order in rbuf
       }
       fprintf(stdout,"Report \"%s\"\n", argv[prefixIndexes[j]]); // Report "prefix"
@@ -189,5 +189,6 @@ void sigIntHandler(int sig_num){
       fprintf(stdout,"%s - done\n" ,globalPrefixArray[i]);
     }
   }
+  sleep(1);
   return;
 }
