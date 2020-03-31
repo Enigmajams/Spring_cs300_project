@@ -167,8 +167,8 @@ size_t /* O - Length of string */ strlcpy(char*dst /* O - Destination string */,
 void sigIntHandler(int sig_num){
   int sigintCurrentPrefixCount;
   int sigintCurrentPassageCount;
-  sem_getvalue(&globalPrefixCount, &sigintCurrentPrefixCount);
-  sem_getvalue(&globalPassageCount, &sigintCurrentPassageCount);
+  sem_getvalue(&globalCurrentPrefix, &sigintCurrentPrefixCount);
+  sem_getvalue(&globalCurrentPassage, &sigintCurrentPassageCount);
 
   for(int i = 0; i < globalPrefixCount;i++){
     if(sigintCurrentPrefixCount < i ){
