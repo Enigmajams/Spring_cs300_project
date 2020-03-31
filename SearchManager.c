@@ -56,10 +56,11 @@ int main(int argc, char**argv){
 
     char* localPrefixArray[validPrefixes]; //declares a local array to assign global pointer to
     for (int i = 0; i < validPrefixes; i++){ //for each valid prefix, add it to the array
- fprintf(stderr,"Prefixes copy loop %s\n", i);
+ fprintf(stderr,"Prefixes copy loop %d -- prefix :: %s\n", i, argv[prefixIndexes[i]]);
       localPrefixArray[i] = argv[prefixIndexes[i]]; //copy it in
     }
     fprintf(stderr,"Prefixes copied\n");
+    
     globalPrefixArray = localPrefixArray; //assign the global array to the local one
     globalPrefixCount = validPrefixes; //assgins the number of prefixes to the global value
     sem_init(&globalCurrentPrefix, 0, 0); //intialize current prefix to 0
