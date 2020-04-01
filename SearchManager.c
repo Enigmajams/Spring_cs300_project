@@ -179,10 +179,10 @@ void sigIntHandler(int sig_num){
     if (sigintCurrentPassageCount == 0){ //if we have recieved no messages, print all as pending
       fprintf(stdout,"%s - pending\n" ,globalPrefixArray[i]);
     }
-    else if(i+1 == sigintCurrentPrefixCount ){ // else if we are currently in that passage print the relevant info
+    else if(i == sigintCurrentPrefixCount ){ // else if we are currently in that passage print the relevant info
       fprintf(stdout,"%s - %d out of %d\n" ,globalPrefixArray[i],sigintCurrentPassageCount,globalPassageCount);
     }
-    else if(i+1  > sigintCurrentPrefixCount){ //if we have recieved at least one message and the count of the prefix we are on is behind where we are, print pending
+    else if(i  > sigintCurrentPrefixCount){ //if we have recieved at least one message and the count of the prefix we are on is behind where we are, print pending
       fprintf(stdout,"%s - pending\n" ,globalPrefixArray[i]);
     }
     else{ //otherwise, we're done
