@@ -32,7 +32,7 @@ int main(int argc, char**argv){
         fprintf(stderr,"Usage: %s <time> <prefix>\n",argv[0]);
         exit(-1);
     }
-    for(int i = 2; i < argc; i++){//if prefixes are invalid ignore them
+    for (int i = 2; i < argc; i++){//if prefixes are invalid ignore them
       if (strlen(argv[i]) <=2){//Prefix too short
         fprintf(stderr,"\"%s\" is too short to be a valid prefix.\nIgnoring ... \n\n",argv[i]);
       }
@@ -47,46 +47,40 @@ int main(int argc, char**argv){
     if (validPrefixes < 1){//Check to see if we have disqaulified all prefixes
       fprintf(stderr,"Error: please provide at least one valid prefix of at least two characters for search\n");
       exit(-1);
-    }
+    }//otherwise we have valid input
 
-//We have valid input
-    int msqid = getMSQID();
-    int delay= atoi(argv[1]);
-    response_buf rbuf;
+    int msqid = getMSQID(); //grab the queue id
+    int delay = atoi(argv[1]); //take in the delay
+    response_buf rbuf; //declare an rbuf variable
 
     char* localPrefixArray[validPrefixes]; //declares a local array to assign global pointer to
     for (int i = 0; i < validPrefixes; i++){ //for each valid prefix, add it to the array
-    //fprintf(stderr,"Prefixes copy loop %d -- prefix :: %s\n", i, argv[prefixIndexes[i]]);
       localPrefixArray[i] = argv[prefixIndexes[i]]; //copy it in
     }
-    //fprintf(stderr,"Prefixes copied\n");
 
     globalPrefixArray = localPrefixArray; //assign the global array to the local one
     globalPrefixCount = validPrefixes; //assgins the number of prefixes to the global value
     sem_init(&globalCurrentPrefix, 0, 0); //intialize current prefix to 0
     sem_init(&globalCurrentPassage, 0, 0); //initialize passage count to zero
     signal(SIGINT, sigIntHandler); //enable sigIntHandler
-
     //fprintf(stderr,"semaphores initialized\n");
-    for (int j = 0; j < validPrefixes; j++){//this loop runs for each valid prefix
-      //fprintf(stderr,"Prefix loop: %d\n", j);
-      sendMessage(1, j+1, msqid, argv[prefixIndexes[j]]);//send a message of this prefix
-      
-      rbuf = getResponse(msqid); //get a response
 
-      response_buf responses[rbuf.count]; //creates array of size(number of passages)
-      int passageCount = rbuf.count; //takes down thenumber of passages for the loop
+    for (int j = 0; j < validPrefixes; j++){//this loop runs for each valid prefix
+      sendMessage(1, j+1, msqid, argv[prefixIndexes[j]]);//send a message of this prefix
+
+      rbuf = getResponse(msqid); //wait for and get a response
+      int passageCount = rbuf.count; //takes down the number of passages for the loop from the message
+      response_buf responses[passageCount]; //creates array of size(number of passages) to store the responses
       responses[rbuf.index] = rbuf; //adds the message to its slot in the order in rbuf
 
-      if (j == 0) {globalPassageCount = passageCount;} //put the passage count in the global variable
+      if (j == 0) {globalPassageCount = passageCount;} //put the passage count in the global variable in our first loop, if statement to avoid redundant execution
 
-      for(int i = 1; i < passageCount; i++){//loop for all responses back for this prefix
+      for (int i = 1; i < passageCount; i++){//loop for all responses back for this prefix
         rbuf = getResponse(msqid);//grabs the response
         sem_post(&globalCurrentPassage); //increment atomically the number of the passage we're on
-        sleep(2);
         responses[rbuf.index] = rbuf;//adds the message to its slot in the order in rbuf
       }
-      
+
       fprintf(stdout,"Report \"%s\"\n", argv[prefixIndexes[j]]); // Report "prefix"
       for (int i = 0; i < passageCount; i++){ //runs for each passage and prints "Passage %d - %s - %s\n" if found, "Passage %d - %s - no word found\n" if not
         if (responses[i].present == 1){//checks if each message struct has a longest Word and displays it if it does
@@ -96,15 +90,15 @@ int main(int argc, char**argv){
             fprintf(stdout,"Passage %d - %s - no word found\n", responses[i].index, responses[i].location_description);
         }
       }
-      
+
       sem_post(&globalCurrentPrefix); //increment atomically the number of the prefix we've completed
-      sem_init(&globalCurrentPassage, 0, 0); //set passage count back to zero 
-      if(delay > 0){sleep(delay);} //if we have a delay, wait before sending the next prefix
+      sem_init(&globalCurrentPassage, 0, 0); //set passage count back to zero
+      if (delay > 0){sleep(delay);} //if we have a delay, wait before sending the next prefix
     }
 
-    sendMessage(1, 0, msqid, "   ");//send empty message to tell PP to quit
-    fprintf(stdout,"Exiting ... \n");//Finished up, let the user know
-    exit(0);//exit
+    sendMessage(1, 0, msqid, "   "); //send empty message to tell PP to quit
+    fprintf(stdout,"Exiting ... \n"); //Finished up, let the user know
+    exit(0); //exit
 }
 
 
@@ -176,7 +170,6 @@ void sigIntHandler(int sig_num){
   sem_getvalue(&globalCurrentPassage, &sigintCurrentPassageCount);
 
   for(int i = 0; i < globalPrefixCount;i++){
-    //fprintf(stdout,"%s - %d and %d and prefix %d in passage %d\n" ,globalPrefixArray[i],i,globalPassageCount,sigintCurrentPrefixCount, sigintCurrentPassageCount);
     if (globalPassageCount == 0){ //if we have recieved no messages, print all as pending
       fprintf(stdout,"%s - pending\n" ,globalPrefixArray[i]);
     }
@@ -190,6 +183,5 @@ void sigIntHandler(int sig_num){
       fprintf(stdout,"%s - done\n" ,globalPrefixArray[i]);
     }
   }
-  sleep(1);
   return;
 }
