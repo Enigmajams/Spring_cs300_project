@@ -177,7 +177,7 @@ void sigIntHandler(int sig_num){
 
   for(int i = 0; i < globalPrefixCount;i++){
     //fprintf(stdout,"%s - %d and %d and prefix %d in passage %d\n" ,globalPrefixArray[i],i,globalPassageCount,sigintCurrentPrefixCount, sigintCurrentPassageCount);
-    if (sigintCurrentPassageCount == 0){ //if we have recieved no messages, print all as pending
+    if (globalPassageCount == 0){ //if we have recieved no messages, print all as pending
       fprintf(stdout,"%s - pending\n" ,globalPrefixArray[i]);
     }
     else if(i == sigintCurrentPrefixCount ){ // else if we are currently in that passage print the relevant info
