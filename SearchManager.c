@@ -71,7 +71,6 @@ int main(int argc, char**argv){
     for (int j = 0; j < validPrefixes; j++){//this loop runs for each valid prefix
       //fprintf(stderr,"Prefix loop: %d\n", j);
       sendMessage(1, j+1, msqid, argv[prefixIndexes[j]]);//send a message of this prefix
-      if (j!=0) {sem_init(&globalCurrentPassage, 0, 0);} //set passage count to zero on all but the first loop
 
       rbuf = getResponse(msqid); //get a response
 
@@ -87,6 +86,7 @@ int main(int argc, char**argv){
         sleep(2);
         responses[rbuf.index] = rbuf;//adds the message to its slot in the order in rbuf
       }
+
       fprintf(stdout,"Report \"%s\"\n", argv[prefixIndexes[j]]); // Report "prefix"
       for (int i = 0; i < passageCount; i++){ //runs for each passage and prints "Passage %d - %s - %s\n" if found, "Passage %d - %s - no word found\n" if not
         if (responses[i].present == 1){//checks if each message struct has a longest Word and displays it if it does
@@ -96,7 +96,7 @@ int main(int argc, char**argv){
             fprintf(stdout,"Passage %d - %s - no word found\n", responses[i].index, responses[i].location_description);
         }
       }
-      //fprintf(stderr,"\n Delaying by %d\n", delay);//spacing out each report at the end for clarity
+      if (j!=0) {sem_init(&globalCurrentPassage, 0, 0);} //set passage count to zero on all but the first loop
       sem_post(&globalCurrentPrefix);//increment atomically the number of the prefix we've completed
       if(delay > 0){sleep(delay);}//if we have a delay, wait before sending the next prefix
     }
